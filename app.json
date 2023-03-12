@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "lifting-log",
+    "slug": "lifting-log",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
