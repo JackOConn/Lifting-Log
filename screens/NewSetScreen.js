@@ -3,9 +3,7 @@ import { View, StyleSheet, SafeAreaView } from "react-native";
 import { useState } from "react";
 
 export default function NewSetScreen({ navigation, route }) {
-  const [setName, setSetName] = useState("");
-  const [reps, setReps] = useState();
-  const [weight, setWeight] = useState();
+  const [exerciseName, setExerciseName] = useState("");
 
   return (
     <NativeBaseProvider>
@@ -18,26 +16,13 @@ export default function NewSetScreen({ navigation, route }) {
             size="2xl"
             maxWidth={"80%"}
             bottom={5}
-            value={setName}
-            onChangeText={(val) => setSetName(val)}
+            value={exerciseName}
+            onChangeText={(val) => setExerciseName(val)}
           />
           {/* Set Name Input */}
 
-          {/* Set Reps Input */}
-          <Input
-            keyboardType="numeric"
-            style={styles.input}
-            placeholder="12"
-            size="2xl"
-            maxWidth={"80%"}
-            bottom={5}
-            value={reps}
-            onChangeText={(val) => setReps(val)}
-          />
-          {/* Set Reps Input */}
-
           {/* Set Weight Input */}
-          <Input
+          {/* <Input
             keyboardType="numeric"
             style={styles.input}
             placeholder="135"
@@ -46,7 +31,7 @@ export default function NewSetScreen({ navigation, route }) {
             bottom={5}
             value={weight}
             onChangeText={(val) => setWeight(val)}
-          />
+          /> */}
           {/* Set Weight Input */}
 
           <View style={styles.buttonsContainer}>
@@ -68,12 +53,10 @@ export default function NewSetScreen({ navigation, route }) {
               alignSelf={"center"}
               background={"#26abff"}
               size={"lg"}
-              disabled={!setName || !reps || !weight}
+              disabled={!exerciseName}
               onPress={() =>
                 navigation.navigate("View Entry", {
-                  setName,
-                  reps,
-                  weight,
+                  exerciseName,
                   item: route.params.item,
                   index: route.params.index,
                 })

@@ -3,6 +3,7 @@ import {
   NativeBaseProvider,
   AddIcon,
   ArrowBackIcon,
+  KeyboardAvoidingView,
 } from "native-base";
 import {
   View,
@@ -12,62 +13,61 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { Exercise } from "../Exercise";
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 
 export default function ViewEntryScreen({ navigation, route }) {
   const [isRender, setisRender] = useState(false);
-  const [sets, setSets] = useState([]);
+  const [exercises, setExercises] = useState([]);
+  // const [exerciseSets, setExerciseSets] = useState([]);
 
   // new set added
   React.useEffect(() => {
-    if (route.params?.setName) {
-      handleNewSet(route.params.setName, route.params.reps, route.params.weight, "");
+    if (route.params?.exerciseName) {
+      handleNewExercise(route.params.exerciseName);
     }
   });
 
-  // if route is from Home Screen, populate sets
+  // if route is from Home Screen, populate exercises
   React.useEffect(() => {
     if (route.params?.fromHome) {
       route.params.fromHome = null;
-      setSets(route.params.item.sets);
+      setExercises(route.params.item.exercises);
     }
   });
 
-  const handleNewSet = (setName, setReps, setWeight, setDesc) => {
-    route.params.setName = null;
-    const newSets = [...sets];
-    setSets([
-      ...newSets,
+  const handleNewExercise = (exerciseName) => {
+    route.params.exerciseName = null;
+    const newExercises = [...exercises];
+    setExercises([
+      ...newExercises,
       {
-        setName: setName,
-        setReps: setReps,
-        setDesc: setDesc,
-        setWeight: setWeight
+        exerciseName: exerciseName,
+        exerciseSets: [],
       },
     ]);
   };
 
+  // const handleNewExerciseSet = (item) => {
+  //   route.params.exerciseName = null;
+  //   const newExercises = [...exercises];
+  //   setExercises([
+  //     ...newExercises,
+  //     {
+  //       exerciseName: exerciseName,
+  //       exerciseSets: ["Hello", "Goodbye"],
+  //     },
+  //   ]);
+  // };
+
   const renderItem = ({ item, index }) => {
-    return (
-      <View style={styles.itemContainer}>
-        <TouchableOpacity
-          key={index}
-          style={styles.item}
-          onPress={() => {
-            // Go to set info screen, w/ editable text
-          }}
-        >
-          <View>
-            <Text style={styles.text}>{item.setName}</Text>
-            <Text style={styles.reps}>{item.setReps} reps @ {item.setWeight} lbs.</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
+      return <Exercise item={item} index={index}></Exercise>;
   };
 
   return (
     <NativeBaseProvider>
+      
       {/* Header */}
       <View style={styles.header}>
         <SafeAreaView style={styles.headerButtonsContainer}>
@@ -79,7 +79,7 @@ export default function ViewEntryScreen({ navigation, route }) {
             size={"lg"}
             onPress={() =>
               navigation.navigate("Home", {
-                sets,
+                exercises,
                 entryIndex: route.params.index,
               })
             }
@@ -116,10 +116,9 @@ export default function ViewEntryScreen({ navigation, route }) {
       {/* Title & Date */}
 
       {/* List of Exercises */}
-      <SafeAreaView style={styles.container}>
-        <FlatList
-          // inverted={true}
-          data={sets}
+      <SafeAreaView behavior="padding" style={styles.container}>
+        <KeyboardAwareFlatList
+          data={exercises}
           renderItem={renderItem}
           extraData={isRender}
         />
@@ -140,7 +139,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: "#080808",
     paddingBottom: 0.12,
   },
@@ -148,12 +147,6 @@ const styles = StyleSheet.create({
   titleAndDateContainer: {
     height: "11%",
     backgroundColor: "#080808",
-  },
-
-  itemContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    paddingVertical: 1,
   },
 
   textTitle: {
@@ -172,33 +165,5 @@ const styles = StyleSheet.create({
   headerButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-
-  item: {
-    justifyContent: "center",
-    backgroundColor: "#101010",
-    alignItems: "flex-start",
-    borderColor: "#202020",
-    borderRadius: "30%",
-    width: "90%",
-    // height: 100,
-  },
-
-  text: {
-    marginVertical: 36,
-    fontSize: 22,
-    marginLeft: 20,
-    color: "#fff",
-    paddingLeft: 10,
-    top: 4,
-  },
-
-  reps: {
-    fontSize: 12,
-    marginLeft: 20,
-    color: "#9c9c9c",
-    paddingLeft: 10,
-    paddingBottom: 10,
-    bottom: 26,
   },
 });

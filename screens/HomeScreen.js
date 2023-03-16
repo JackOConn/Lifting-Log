@@ -1,14 +1,7 @@
-import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { Route } from "@react-navigation/native";
-import { NativeBaseProvider, Text, Button, AddIcon } from "native-base";
-import {
-  StyleSheet,
-  View,
-  FlatList,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
+import { NativeBaseProvider, Button, AddIcon } from "native-base";
+import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
+import { EntryItem } from "../EntryItem";
 
 export default function HomeScreen({ navigation, route }) {
   const current = new Date();
@@ -28,8 +21,8 @@ export default function HomeScreen({ navigation, route }) {
 
   // if coming from View Entry Screen, update entry's sets
   React.useEffect(() => {
-    if (route.params?.sets) {
-      handleNewSets(route.params.sets, route.params.entryIndex);
+    if (route.params?.exercises) {
+      handleNewExercises(route.params.exercises, route.params.entryIndex);
     }
   });
 
@@ -37,20 +30,20 @@ export default function HomeScreen({ navigation, route }) {
     route.params.entryName = null;
     const newEntries = [...entries];
     setEntries([
-      ...newEntries,
       {
         title: newEntry,
         date: currDate,
-        sets: [],
+        exercises: [],
       },
+      ...newEntries,
     ]);
   };
 
-  const handleNewSets = (sets, index) => {
-    route.params.sets = null;
+  const handleNewExercises = (exercises, index) => {
+    route.params.exercises = null;
     route.params.entryIndex = null;
     const currEntry = entries[index];
-    currEntry["sets"] = sets;
+    currEntry["exercises"] = exercises;
     setEntries([...entries]);
   };
 
@@ -63,23 +56,7 @@ export default function HomeScreen({ navigation, route }) {
   const fromHome = " ";
 
   const renderItem = ({ item, index }) => {
-    return (
-      <View style={styles.itemContainer}>
-        <TouchableOpacity
-          key={index}
-          style={styles.item}
-          onPress={() => {
-            navigation.navigate("View Entry", { item, index, fromHome });
-          }} //on press of item, go to list of exercises done that day
-        >
-          <View>
-            <Text style={styles.text}>{item.title}</Text>
-            <Text style={styles.date}>{item.date}</Text>
-            <Text style={styles.setLength}>{item.sets.length} sets</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
+    return <EntryItem item={item} index={index}></EntryItem>;
   };
 
   return (
@@ -105,7 +82,7 @@ export default function HomeScreen({ navigation, route }) {
       {/* List */}
       <SafeAreaView style={styles.container}>
         <FlatList
-          inverted={true}
+          // inverted={true}
           data={entries}
           renderItem={renderItem}
           extraData={isRender}
@@ -130,12 +107,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#080808",
-    paddingBottom: 0.12,
+    paddingBottom: 0.3,
   },
 
   itemContainer: {
     flexDirection: "row",
     justifyContent: "center",
+    // paddingTop: 10,
     paddingVertical: 5,
   },
 
