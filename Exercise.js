@@ -6,20 +6,33 @@ import {
   SafeAreaView,
   FlatList,
   KeyboardAvoidingView,
+  ScrollView,
 } from "react-native";
 import { Column, Text, Input } from "native-base";
 import { useNavigation } from "@react-navigation/native";
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 
 export const Exercise = ({ item, index }) => {
   const [expanded, setExpanded] = useState(false);
   const [weight, setWeight] = useState();
   const [reps, setReps] = useState();
+  const [isRender, setisRender] = useState(false);
 
   const handleAddSet = (item, weight, reps) => {
     const newSets = [...item.exerciseSets];
     item.exerciseSets = [...newSets, { weight: weight, reps: reps }];
     setReps(null);
     setWeight(null);
+  };
+
+  const renderItem = ({ item }) => {
+    return (
+      <View style={styles.item2} activeOpacity={0.7}>
+        <Text style={styles.text2}>
+          {item.reps} reps @ {item.weight} lbs.{" "}
+        </Text>
+      </View>
+    );
   };
 
   return (
@@ -38,13 +51,13 @@ export const Exercise = ({ item, index }) => {
       <View>
         {expanded && (
           <>
-            <View>
-              {item.exerciseSets.map((exerciseSet) => (
-                <View style={styles.item2} activeOpacity={0.7}>
-                  <Text style={styles.text2}>{exerciseSet.reps} reps @ {exerciseSet.weight} lbs. </Text>
-                </View>
-              ))}
-            </View>
+            <SafeAreaView>
+              <FlatList
+                data={item.exerciseSets}
+                renderItem={renderItem}
+                extraData={isRender}
+              />
+            </SafeAreaView>
             <View style={styles.itemAdd}>
               <View style={styles.weightInput}>
                 <Text color={"#fff"}>Weight</Text>

@@ -62,12 +62,11 @@ export default function ViewEntryScreen({ navigation, route }) {
   // };
 
   const renderItem = ({ item, index }) => {
-      return <Exercise item={item} index={index}></Exercise>;
+    return <Exercise item={item} index={index}></Exercise>;
   };
 
   return (
     <NativeBaseProvider>
-      
       {/* Header */}
       <View style={styles.header}>
         <SafeAreaView style={styles.headerButtonsContainer}>
@@ -139,6 +138,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
+    flex: 1,
     flexGrow: 1,
     backgroundColor: "#080808",
     paddingBottom: 0.12,
