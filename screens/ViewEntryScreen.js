@@ -4,7 +4,7 @@ import {
   AddIcon,
   ArrowBackIcon,
 } from "native-base";
-import { View, StyleSheet, Text, SafeAreaView } from "react-native";
+import { View, StyleSheet, Text, SafeAreaView, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { Exercise } from "../Exercise";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
@@ -80,7 +80,7 @@ export default function ViewEntryScreen({ navigation, route }) {
           {/* Back Button */}
 
           {/* Add Set Button */}
-          <Button
+          {/* <Button
             paddingRight={8}
             alignSelf={"flex-end"}
             variant={"link"}
@@ -93,7 +93,7 @@ export default function ViewEntryScreen({ navigation, route }) {
             }
           >
             <AddIcon size={"md"} color={"#26abff"}></AddIcon>
-          </Button>
+          </Button> */}
           {/* Add Set Button */}
         </SafeAreaView>
       </View>
@@ -115,6 +115,20 @@ export default function ViewEntryScreen({ navigation, route }) {
         />
       </SafeAreaView>
       {/* List of Exercises */}
+
+      <View style={styles.addButtonContainer}>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() =>
+            navigation.navigate("New Set", {
+              item: route.params.item,
+              index: route.params.index,
+            })
+          }
+        >
+          <AddIcon size={"lg"} color={"#26abff"}></AddIcon>
+        </TouchableOpacity>
+      </View>
     </NativeBaseProvider>
   );
 }
@@ -158,4 +172,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
+
+  addButtonContainer: {
+    position: "absolute",
+    bottom: 55,
+    right: 30,
+
+  },
+
+  addButton: {
+    width: 60,
+    height: 60,
+    borderRadius: "50%",
+    backgroundColor: "#141414",
+    justifyContent: "center",
+    alignItems: "center",
+  }
 });

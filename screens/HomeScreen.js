@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { NativeBaseProvider, Button, AddIcon, Text } from "native-base";
-import { StyleSheet, View, FlatList, SafeAreaView, SectionList } from "react-native";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  SafeAreaView,
+  SectionList,
+} from "react-native";
 import { EntryItem } from "../EntryItem";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function HomeScreen({ navigation, route }) {
   const current = new Date();
@@ -65,7 +72,7 @@ export default function HomeScreen({ navigation, route }) {
       <View style={styles.header}>
         <SafeAreaView>
           {/* Add Button */}
-          <Button
+          {/* <Button
             paddingRight={8}
             alignSelf={"flex-end"}
             variant={"link"}
@@ -73,7 +80,7 @@ export default function HomeScreen({ navigation, route }) {
             onPress={() => navigation.navigate("New Entry")}
           >
             <AddIcon size={"md"} color={"#26abff"}></AddIcon>
-          </Button>
+          </Button> */}
           {/* Add Button */}
         </SafeAreaView>
       </View>
@@ -83,14 +90,20 @@ export default function HomeScreen({ navigation, route }) {
       <SafeAreaView style={styles.container}>
         <FlatList
           // ListHeaderComponent={()=><Text alignSelf={"center"} fontSize={24} color={"#9a9a9a"}>entries: {entries.length}</Text>}
-          contentContainerStyle={{top: 20, paddingBottom: 30}}
-          ItemSeparatorComponent={() => <View style={{height: 10}} />}
+          contentContainerStyle={{ top: 20, paddingBottom: 30 }}
+          ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
           data={entries}
           renderItem={renderItem}
           extraData={isRender}
         />
       </SafeAreaView>
       {/* List */}
+
+      <View style={styles.addButtonContainer}>
+        <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate("New Entry")}>
+          <AddIcon size={"lg"} color={"#26abff"}></AddIcon>
+        </TouchableOpacity>
+      </View>
     </NativeBaseProvider>
   );
 }
@@ -113,4 +126,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#080808",
     paddingBottom: 0.3,
   },
+
+  addButtonContainer: {
+    position: "absolute",
+    bottom: 55,
+    right: 30,
+
+  },
+
+  addButton: {
+    width: 60,
+    height: 60,
+    borderRadius: "50%",
+    backgroundColor: "#141414",
+    justifyContent: "center",
+    alignItems: "center",
+  }
 });
