@@ -3,17 +3,9 @@ import {
   NativeBaseProvider,
   AddIcon,
   ArrowBackIcon,
-  KeyboardAvoidingView,
 } from "native-base";
-import {
-  View,
-  StyleSheet,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
-import React, { useState, useRef } from "react";
+import { View, StyleSheet, Text, SafeAreaView } from "react-native";
+import React, { useState } from "react";
 import { Exercise } from "../Exercise";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 

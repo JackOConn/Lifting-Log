@@ -5,12 +5,8 @@ import {
   TouchableOpacity,
   SafeAreaView,
   FlatList,
-  KeyboardAvoidingView,
-  ScrollView,
 } from "react-native";
-import { Column, Text, Input } from "native-base";
-import { useNavigation } from "@react-navigation/native";
-import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
+import { Text, Input } from "native-base";
 
 export const Exercise = ({ item, index }) => {
   const [expanded, setExpanded] = useState(false);
@@ -27,7 +23,7 @@ export const Exercise = ({ item, index }) => {
 
   const renderItem = ({ item }) => {
     return (
-      <View style={styles.item2} activeOpacity={0.7}>
+      <View style={styles.item2}>
         <Text style={styles.text2}>
           {item.reps} reps @ {item.weight} lbs.{" "}
         </Text>
@@ -51,13 +47,11 @@ export const Exercise = ({ item, index }) => {
       <View>
         {expanded && (
           <>
-            <SafeAreaView>
               <FlatList
                 data={item.exerciseSets}
                 renderItem={renderItem}
                 extraData={isRender}
               />
-            </SafeAreaView>
             <View style={styles.itemAdd}>
               <View style={styles.weightInput}>
                 <Text color={"#fff"}>Weight</Text>
@@ -67,21 +61,19 @@ export const Exercise = ({ item, index }) => {
                   style={styles.input}
                   variant={"underlined"}
                   onChangeText={(val) => setWeight(val)}
-                >
+                />
                   <Text style={styles.addSetText}></Text>
-                </Input>
               </View>
               <View style={styles.repsInput}>
                 <Text color={"#fff"}>Reps</Text>
                 <Input
-                  value={reps}
                   keyboardType="numeric"
                   style={styles.input}
                   variant={"underlined"}
+                  value={reps}
                   onChangeText={(val) => setReps(val)}
-                >
+                />
                   <Text style={styles.addSetText}></Text>
-                </Input>
               </View>
               <View>
                 <TouchableOpacity
@@ -114,7 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#101010",
     alignItems: "flex-start",
     borderColor: "#202020",
-    borderRadius: "0%",
+    borderRadius: "8%",
     width: "90%",
     height: 90,
   },
@@ -124,9 +116,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#101010",
     alignItems: "flex-start",
     borderColor: "#080808",
-    width: 350,
+    // width: "100%",
     height: 70,
-    borderRadius: "0%",
+    borderRadius: "8%",
     borderTopWidth: 2,
   },
 
@@ -177,7 +169,7 @@ const styles = StyleSheet.create({
     borderColor: "#080808",
     width: 350,
     height: 70,
-    borderRadius: "0%",
+    borderRadius: "8%",
     borderTopWidth: 2,
   },
 
@@ -185,14 +177,14 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: 100,
     left: 20,
-    top: -3,
+    top: 6,
   },
 
   repsInput: {
     alignSelf: "center",
     width: 75,
     left: 13,
-    top: -3,
+    top: 6,
   },
 
   addSetButton: {
@@ -202,6 +194,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: "100%",
+    borderRadius: "8%",
     width: 100,
+    borderTopLeftRadius: "0%",
+    borderBottomLeftRadius: "0%",
   },
 });

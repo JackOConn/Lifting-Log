@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { NativeBaseProvider, Button, AddIcon } from "native-base";
-import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
+import { NativeBaseProvider, Button, AddIcon, Text } from "native-base";
+import { StyleSheet, View, FlatList, SafeAreaView, SectionList } from "react-native";
 import { EntryItem } from "../EntryItem";
 
 export default function HomeScreen({ navigation, route }) {
@@ -82,7 +82,9 @@ export default function HomeScreen({ navigation, route }) {
       {/* List */}
       <SafeAreaView style={styles.container}>
         <FlatList
-          // inverted={true}
+          // ListHeaderComponent={()=><Text alignSelf={"center"} fontSize={24} color={"#9a9a9a"}>entries: {entries.length}</Text>}
+          contentContainerStyle={{top: 20, paddingBottom: 30}}
+          ItemSeparatorComponent={() => <View style={{height: 10}} />}
           data={entries}
           renderItem={renderItem}
           extraData={isRender}
@@ -96,7 +98,9 @@ export default function HomeScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   header: {
     height: "11%",
+    flexDirection: "column",
     backgroundColor: "#151515",
+    justifyContent: "center",
   },
 
   headerText: {
@@ -108,47 +112,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#080808",
     paddingBottom: 0.3,
-  },
-
-  itemContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    // paddingTop: 10,
-    paddingVertical: 5,
-  },
-
-  item: {
-    justifyContent: "center",
-    backgroundColor: "#101010",
-    alignItems: "flex-start",
-    borderColor: "#202020",
-    borderRadius: "30%",
-    width: "90%",
-  },
-
-  text: {
-    marginVertical: 36,
-    fontSize: 22,
-    marginLeft: 20,
-    color: "#fff",
-    paddingLeft: 10,
-    top: 10,
-  },
-
-  date: {
-    fontSize: 12,
-    marginLeft: 20,
-    color: "#9c9c9c",
-    paddingLeft: 10,
-    paddingBottom: 10,
-    bottom: 22,
-  },
-
-  setLength: {
-    fontSize: 12,
-    marginLeft: 20,
-    color: "#9c9c9c",
-    paddingLeft: 10,
-    bottom: 32,
   },
 });

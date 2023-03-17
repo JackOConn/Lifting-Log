@@ -31,8 +31,6 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    // paddingTop: 10,
-    paddingVertical: 5,
   },
 
   item: {
@@ -40,33 +38,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#101010",
     alignItems: "flex-start",
     borderColor: "#202020",
-    borderRadius: "30%",
+    borderRadius: "8%",
     width: "90%",
+    height: 100,
   },
 
   text: {
-    marginVertical: 36,
+    fontWeight: "bold",
     fontSize: 22,
-    marginLeft: 20,
+    marginLeft: 30,
     color: "#fff",
-    paddingLeft: 10,
-    top: 10,
+    top: 4,
   },
 
   date: {
     fontSize: 12,
-    marginLeft: 20,
+    marginLeft: 30,
     color: "#9c9c9c",
-    paddingLeft: 10,
-    paddingBottom: 10,
-    bottom: 22,
+    top: 6,
   },
 
   exerciseLength: {
     fontSize: 12,
-    marginLeft: 20,
+    marginLeft: 30,
     color: "#9c9c9c",
-    paddingLeft: 10,
-    bottom: 32,
+    top: 4,
   },
 });
