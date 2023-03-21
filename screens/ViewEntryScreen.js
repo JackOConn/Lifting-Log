@@ -21,14 +21,6 @@ export default function ViewEntryScreen({ navigation, route }) {
   const [exercises, setExercises] = useState([]);
   const [entryName, setEntryName] = useState();
   const [isNew, setIsNew] = useState(false);
-  // const [exerciseSets, setExerciseSets] = useState([]);
-
-  // new set added
-  // React.useEffect(() => {
-  //   if (route.params?.exerciseName) {
-  //     handleNewExercise(route.params.exerciseName);
-  //   }
-  // });
 
   // if route is from Home Screen, populate exercises and entry name
   React.useEffect(() => {
@@ -42,7 +34,6 @@ export default function ViewEntryScreen({ navigation, route }) {
   // if route is from Home, and is adding new Entry
   React.useEffect(() => {
     if (route.params?.fromHomeNew) {
-      // console.log(item);
       route.params.fromHomeNew = null;
       setIsNew(true);
     }
@@ -59,8 +50,6 @@ export default function ViewEntryScreen({ navigation, route }) {
       },
     ]);
   };
-
-  // const updateExercise = ()
 
   const renderItem = ({ item, index }) => {
     return <Exercise item={item} index={index}></Exercise>;
@@ -88,23 +77,6 @@ export default function ViewEntryScreen({ navigation, route }) {
             <ArrowBackIcon size={"md"} color={"#26abff"}></ArrowBackIcon>
           </Button>
           {/* Back Button */}
-
-          {/* Add Set Button */}
-          {/* <Button
-            paddingRight={8}
-            alignSelf={"flex-end"}
-            variant={"link"}
-            size={"lg"}
-            onPress={() =>
-              navigation.navigate("New Set", {
-                item: route.params.item,
-                index: route.params.index,
-              })
-            }
-          >
-            <AddIcon size={"md"} color={"#26abff"}></AddIcon>
-          </Button> */}
-          {/* Add Set Button */}
         </SafeAreaView>
       </View>
       {/* Header */}

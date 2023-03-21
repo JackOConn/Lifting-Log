@@ -16,15 +16,6 @@ export const EntryItem = ({ item, index }) => {
         }}
       >
         <View>
-          {/* <View styles={styles.inputContainer}> */}
-          {/* <Input
-            bottom={1}
-            left={7}
-            width={"40%"}
-            variant={"underlined"}
-            style={styles.textInput}
-          ></Input> */}
-          {/* </View> */}
           <Text style={styles.text}>{item.title}</Text>
           <Text style={styles.date}>{item.date}</Text>
           <Text style={styles.exerciseLength}>
