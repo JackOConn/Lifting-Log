@@ -40,18 +40,26 @@ export const Exercise = ({ item, index }) => {
         onPress={() => setExpanded(!expanded)}
       >
         <View>
-          <Text style={styles.text}>{item.exerciseName}</Text>
+          <Input
+            left={15}
+            width={"50%"}
+            variant={"unstyled"}
+            placeholder="exercise name"
+            style={styles.exerciseInput}
+            value={item.exerciseName}
+            onChangeText={(val) => (item.exerciseName = val)}
+          ></Input>
           <Text style={styles.setsAmount}>{item.exerciseSets.length} sets</Text>
         </View>
       </TouchableOpacity>
       <View>
         {expanded && (
           <>
-              <FlatList
-                data={item.exerciseSets}
-                renderItem={renderItem}
-                extraData={isRender}
-              />
+            <FlatList
+              data={item.exerciseSets}
+              renderItem={renderItem}
+              extraData={isRender}
+            />
             <View style={styles.itemAdd}>
               <View style={styles.weightInput}>
                 <Text color={"#fff"}>Weight</Text>
@@ -62,7 +70,7 @@ export const Exercise = ({ item, index }) => {
                   variant={"underlined"}
                   onChangeText={(val) => setWeight(val)}
                 />
-                  <Text style={styles.addSetText}></Text>
+                <Text style={styles.addSetText}></Text>
               </View>
               <View style={styles.repsInput}>
                 <Text color={"#fff"}>Reps</Text>
@@ -73,7 +81,7 @@ export const Exercise = ({ item, index }) => {
                   value={reps}
                   onChangeText={(val) => setReps(val)}
                 />
-                  <Text style={styles.addSetText}></Text>
+                <Text style={styles.addSetText}></Text>
               </View>
               <View>
                 <TouchableOpacity
@@ -141,7 +149,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginLeft: 30,
     color: "#9c9c9c",
-    top: 4,
+    top: -2,
   },
 
   addSetText: {
@@ -185,6 +193,12 @@ const styles = StyleSheet.create({
     width: 75,
     left: 13,
     top: 6,
+  },
+
+  exerciseInput: {
+    color: "#fff",
+    fontSize: 22,
+    top: 4,
   },
 
   addSetButton: {

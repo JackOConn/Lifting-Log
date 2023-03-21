@@ -18,23 +18,34 @@ export default function HomeScreen({ navigation, route }) {
 
   const [isRender, setisRender] = useState(false);
   const [entries, setEntries] = useState([]);
+  const [addingEntry, setAddingEntry] = useState(false);
 
-  // if adding new entry, create new entry
-  React.useEffect(() => {
-    if (route.params?.entryName) {
-      handleNewEntry(route.params.entryName);
-    }
-  });
-
-  // if coming from View Entry Screen, update entry's sets
+  // if coming from View Entry Screen, update entry's sets and name
   React.useEffect(() => {
     if (route.params?.exercises) {
-      handleNewExercises(route.params.exercises, route.params.entryIndex);
+      handleNewExercises(
+        route.params.exercises,
+        route.params.entryName,
+        route.params.entryIndex
+      );
     }
   });
 
+  React.useEffect(() => {
+    if (entries.length > 0) {
+      navigation.navigate("View Entry", {
+        item: entries[0],
+        index: 0,
+        fromHomeNew,
+      });
+    }
+    setAddingEntry(false);
+  }, [addingEntry]);
+
   const handleNewEntry = (newEntry) => {
-    route.params.entryName = null;
+    if (route.params?.entryName) {
+      route.params.entryName = null;
+    }
     const newEntries = [...entries];
     setEntries([
       {
@@ -46,12 +57,19 @@ export default function HomeScreen({ navigation, route }) {
     ]);
   };
 
-  const handleNewExercises = (exercises, index) => {
+  const handleNewExercises = (exercises, entryName, index) => {
     route.params.exercises = null;
     route.params.entryIndex = null;
+    route.params.entryName = null;
     const currEntry = entries[index];
     currEntry["exercises"] = exercises;
+    currEntry["title"] = entryName;
     setEntries([...entries]);
+  };
+
+  const handleAddButton = () => {
+    handleNewEntry();
+    setAddingEntry(true);
   };
 
   // const handleDeleteEntry = (index) => {
@@ -60,7 +78,7 @@ export default function HomeScreen({ navigation, route }) {
   //   setEntries(newEntries);
   // };
 
-  const fromHome = " ";
+  const fromHomeNew = " ";
 
   const renderItem = ({ item, index }) => {
     return <EntryItem item={item} index={index}></EntryItem>;
@@ -68,26 +86,15 @@ export default function HomeScreen({ navigation, route }) {
 
   return (
     <NativeBaseProvider>
-      {/* Header */}
-      <View style={styles.header}>
-        <SafeAreaView>
-          {/* Add Button */}
-          {/* <Button
-            paddingRight={8}
-            alignSelf={"flex-end"}
-            variant={"link"}
-            size={"lg"}
-            onPress={() => navigation.navigate("New Entry")}
-          >
-            <AddIcon size={"md"} color={"#26abff"}></AddIcon>
-          </Button> */}
-          {/* Add Button */}
-        </SafeAreaView>
-      </View>
-      {/* Header */}
-
+      <View style={styles.header}></View>
       {/* List */}
       <SafeAreaView style={styles.container}>
+        {entries.length == 0 && (
+          <View style={styles.noEntryContainer}>
+            <Text style={styles.noEntriesText}>No Entries</Text>
+          </View>
+        )}
+
         <FlatList
           // ListHeaderComponent={()=><Text alignSelf={"center"} fontSize={24} color={"#9a9a9a"}>entries: {entries.length}</Text>}
           contentContainerStyle={{ top: 20, paddingBottom: 30 }}
@@ -100,8 +107,11 @@ export default function HomeScreen({ navigation, route }) {
       {/* List */}
 
       <View style={styles.addButtonContainer}>
-        <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate("New Entry")}>
-          <AddIcon size={"lg"} color={"#26abff"}></AddIcon>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => handleAddButton()}
+        >
+          <AddIcon size={"md"} color={"#fff"}></AddIcon>
         </TouchableOpacity>
       </View>
     </NativeBaseProvider>
@@ -131,15 +141,28 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 55,
     right: 30,
-
   },
 
   addButton: {
     width: 60,
     height: 60,
     borderRadius: "50%",
-    backgroundColor: "#141414",
+    backgroundColor: "#26abff",
     justifyContent: "center",
     alignItems: "center",
-  }
+  },
+
+  noEntryContainer: {
+    flex: 1,
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  noEntriesText: {
+    position: "absolute",
+    top: 350,
+    fontSize: 22,
+    color: "#9c9c9c",
+  },
 });

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { Text } from "native-base";
+import { Input, Text } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 
 export const EntryItem = ({ item, index }) => {
@@ -16,6 +16,15 @@ export const EntryItem = ({ item, index }) => {
         }}
       >
         <View>
+          {/* <View styles={styles.inputContainer}> */}
+          {/* <Input
+            bottom={1}
+            left={7}
+            width={"40%"}
+            variant={"underlined"}
+            style={styles.textInput}
+          ></Input> */}
+          {/* </View> */}
           <Text style={styles.text}>{item.title}</Text>
           <Text style={styles.date}>{item.date}</Text>
           <Text style={styles.exerciseLength}>
@@ -43,12 +52,23 @@ const styles = StyleSheet.create({
     height: 100,
   },
 
+  textInput: {
+    color: "#fff",
+    fontSize: 22,
+    fontWeight: "bold",
+    top: 6,
+  },
+
+  inputContainer: {
+    left: 20,
+  },
+
   text: {
     fontWeight: "bold",
     fontSize: 22,
     marginLeft: 30,
     color: "#fff",
-    top: 4,
+    top: 6,
   },
 
   date: {
@@ -62,6 +82,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginLeft: 30,
     color: "#9c9c9c",
-    top: 4,
+    top: 3,
   },
 });

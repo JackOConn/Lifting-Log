@@ -3,8 +3,15 @@ import {
   NativeBaseProvider,
   AddIcon,
   ArrowBackIcon,
+  Input,
 } from "native-base";
-import { View, StyleSheet, Text, SafeAreaView, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState } from "react";
 import { Exercise } from "../Exercise";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
@@ -12,20 +19,32 @@ import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 export default function ViewEntryScreen({ navigation, route }) {
   const [isRender, setisRender] = useState(false);
   const [exercises, setExercises] = useState([]);
+  const [entryName, setEntryName] = useState();
+  const [isNew, setIsNew] = useState(false);
   // const [exerciseSets, setExerciseSets] = useState([]);
 
   // new set added
-  React.useEffect(() => {
-    if (route.params?.exerciseName) {
-      handleNewExercise(route.params.exerciseName);
-    }
-  });
+  // React.useEffect(() => {
+  //   if (route.params?.exerciseName) {
+  //     handleNewExercise(route.params.exerciseName);
+  //   }
+  // });
 
-  // if route is from Home Screen, populate exercises
+  // if route is from Home Screen, populate exercises and entry name
   React.useEffect(() => {
     if (route.params?.fromHome) {
       route.params.fromHome = null;
       setExercises(route.params.item.exercises);
+      setEntryName(route.params.item.title);
+    }
+  });
+
+  // if route is from Home, and is adding new Entry
+  React.useEffect(() => {
+    if (route.params?.fromHomeNew) {
+      // console.log(item);
+      route.params.fromHomeNew = null;
+      setIsNew(true);
     }
   });
 
@@ -41,17 +60,7 @@ export default function ViewEntryScreen({ navigation, route }) {
     ]);
   };
 
-  // const handleNewExerciseSet = (item) => {
-  //   route.params.exerciseName = null;
-  //   const newExercises = [...exercises];
-  //   setExercises([
-  //     ...newExercises,
-  //     {
-  //       exerciseName: exerciseName,
-  //       exerciseSets: ["Hello", "Goodbye"],
-  //     },
-  //   ]);
-  // };
+  // const updateExercise = ()
 
   const renderItem = ({ item, index }) => {
     return <Exercise item={item} index={index}></Exercise>;
@@ -72,6 +81,7 @@ export default function ViewEntryScreen({ navigation, route }) {
               navigation.navigate("Home", {
                 exercises,
                 entryIndex: route.params.index,
+                entryName,
               })
             }
           >
@@ -101,7 +111,17 @@ export default function ViewEntryScreen({ navigation, route }) {
 
       {/* Title & Date */}
       <View style={styles.titleAndDateContainer}>
-        <Text style={styles.textTitle}>{route.params.item.title}</Text>
+        <Input
+          top={2}
+          alignSelf={"center"}
+          placeholder="entry name"
+          maxLength={20}
+          width={"85%"}
+          variant={"unstyled"}
+          style={styles.textInput}
+          value={entryName}
+          onChangeText={(val) => setEntryName(val)}
+        ></Input>
         <Text style={styles.textDate}>{route.params.item.date}</Text>
       </View>
       {/* Title & Date */}
@@ -119,14 +139,9 @@ export default function ViewEntryScreen({ navigation, route }) {
       <View style={styles.addButtonContainer}>
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() =>
-            navigation.navigate("New Set", {
-              item: route.params.item,
-              index: route.params.index,
-            })
-          }
+          onPress={() => handleNewExercise()}
         >
-          <AddIcon size={"lg"} color={"#26abff"}></AddIcon>
+          <AddIcon size={"md"} color={"#fff"}></AddIcon>
         </TouchableOpacity>
       </View>
     </NativeBaseProvider>
@@ -165,7 +180,7 @@ const styles = StyleSheet.create({
   textDate: {
     color: "#9c9c9c",
     alignSelf: "center",
-    top: 28,
+    top: 10,
   },
 
   headerButtonsContainer: {
@@ -177,15 +192,22 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 55,
     right: 30,
-
   },
 
   addButton: {
     width: 60,
     height: 60,
     borderRadius: "50%",
-    backgroundColor: "#141414",
+    backgroundColor: "#26abff",
     justifyContent: "center",
     alignItems: "center",
-  }
+  },
+
+  textInput: {
+    color: "#fff",
+    fontSize: 36,
+    textAlign: "center",
+    fontWeight: "bold",
+    top: 8,
+  },
 });
