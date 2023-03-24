@@ -1,26 +1,29 @@
 import React, { useState } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { Input, Text } from "native-base";
+import { Text, ChevronRightIcon } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 
 export const EntryItem = ({ item, index }) => {
   const navigation = useNavigation();
   const fromHome = " ";
   return (
-    <View style={styles.itemContainer}>
+    <View>
       <TouchableOpacity
         key={index}
+        activeOpacity={0.7}
         style={styles.item}
         onPress={() => {
           navigation.navigate("View Entry", { item, index, fromHome });
         }}
       >
-        <View>
+        <View style={styles.itemContainer}>
           <Text style={styles.text}>{item.title}</Text>
           <Text style={styles.date}>{item.date}</Text>
           <Text style={styles.exerciseLength}>
-            {item.exercises.length} exercises
+            {item.exercises.length}{" "}
+            {item.exercises.length == 1 ? "exercise" : "exercises"}
           </Text>
+          <ChevronRightIcon style={styles.chevron}></ChevronRightIcon>
         </View>
       </TouchableOpacity>
     </View>
@@ -29,11 +32,12 @@ export const EntryItem = ({ item, index }) => {
 
 const styles = StyleSheet.create({
   itemContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
   },
 
   item: {
+    alignSelf: "center",
     justifyContent: "center",
     backgroundColor: "#101010",
     alignItems: "flex-start",
@@ -57,7 +61,7 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: "bold",
     fontSize: 22,
-    marginLeft: 30,
+    marginLeft: 29,
     color: "#fff",
     top: 6,
   },
@@ -74,5 +78,10 @@ const styles = StyleSheet.create({
     marginLeft: 30,
     color: "#9c9c9c",
     top: 3,
+  },
+
+  chevron: {
+    position: "absolute",
+    left: 300,
   },
 });

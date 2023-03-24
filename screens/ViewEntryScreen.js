@@ -74,7 +74,7 @@ export default function ViewEntryScreen({ navigation, route }) {
               })
             }
           >
-            <ArrowBackIcon size={"md"} color={"#26abff"}></ArrowBackIcon>
+            <ArrowBackIcon size={"md"} color={"#b19ff9"}></ArrowBackIcon>
           </Button>
           {/* Back Button */}
         </SafeAreaView>
@@ -104,6 +104,7 @@ export default function ViewEntryScreen({ navigation, route }) {
           data={exercises}
           renderItem={renderItem}
           extraData={isRender}
+          contentContainerStyle={{paddingBottom:30}}
         />
       </SafeAreaView>
       {/* List of Exercises */}
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     backgroundColor: "#080808",
-    paddingBottom: 0.12,
+    // backgroundColor: "red"
   },
 
   titleAndDateContainer: {
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: "50%",
-    backgroundColor: "#26abff",
+    backgroundColor: "#b19ff9",
     justifyContent: "center",
     alignItems: "center",
   },

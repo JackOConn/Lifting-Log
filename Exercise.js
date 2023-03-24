@@ -1,6 +1,18 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TouchableOpacity, FlatList } from "react-native";
-import { Text, Input } from "native-base";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  FlatList,
+  Animated,
+} from "react-native";
+import {
+  Text,
+  Input,
+  AddIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+} from "native-base";
 
 export const Exercise = ({ item, index }) => {
   const [expanded, setExpanded] = useState(false);
@@ -30,7 +42,7 @@ export const Exercise = ({ item, index }) => {
       <TouchableOpacity
         activeOpacity={0.7}
         key={index}
-        style={styles.item}
+        style={expanded ? styles.itemExpanded : styles.item}
         onPress={() => setExpanded(!expanded)}
       >
         <View>
@@ -43,10 +55,18 @@ export const Exercise = ({ item, index }) => {
             value={item.exerciseName}
             onChangeText={(val) => (item.exerciseName = val)}
           ></Input>
-          <Text style={styles.setsAmount}>{item.exerciseSets.length} sets</Text>
+          <Text style={styles.setsAmount}>
+            {item.exerciseSets.length}
+            {item.exerciseSets.length == 1 ? " set" : " sets"}
+          </Text>
         </View>
+        {expanded ? (
+          <ChevronUpIcon style={styles.chevronDown}></ChevronUpIcon>
+        ) : (
+          <ChevronDownIcon style={styles.chevronDown}></ChevronDownIcon>
+        )}
       </TouchableOpacity>
-      <View>
+      <Animated.View>
         {expanded && (
           <>
             <FlatList
@@ -80,17 +100,22 @@ export const Exercise = ({ item, index }) => {
               <View>
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  style={styles.addSetButton}
+                  style={
+                    !weight || !reps
+                      ? styles.addSetButton
+                      : styles.addSetButtonActive
+                  }
                   disabled={!weight || !reps}
                   onPress={() => handleAddSet(item, weight, reps)}
                 >
-                  <Text>ADD</Text>
+                  <AddIcon size={"sm"} color={"#fff"}></AddIcon>
+                  {/* <Text>ADD</Text> */}
                 </TouchableOpacity>
               </View>
             </View>
           </>
         )}
-      </View>
+      </Animated.View>
     </View>
   );
 };
@@ -113,14 +138,24 @@ const styles = StyleSheet.create({
     height: 90,
   },
 
+  itemExpanded: {
+    justifyContent: "center",
+    backgroundColor: "#101010",
+    alignItems: "flex-start",
+    borderColor: "#202020",
+    borderTopLeftRadius: "8%",
+    borderTopRightRadius: "8%",
+    width: "90%",
+    height: 90,
+  },
+
   item2: {
     justifyContent: "center",
     backgroundColor: "#101010",
     alignItems: "flex-start",
     borderColor: "#080808",
-    // width: "100%",
+    width: "100%",
     height: 70,
-    borderRadius: "8%",
     borderTopWidth: 2,
   },
 
@@ -141,37 +176,36 @@ const styles = StyleSheet.create({
 
   setsAmount: {
     fontSize: 12,
-    marginLeft: 30,
+    marginLeft: 28,
     color: "#9c9c9c",
-    top: -2,
+    top: -3,
   },
 
   addSetText: {
     fontSize: 16,
-    // alignSelf: "center",
-    // marginLeft: 30,
     color: "#fff",
     top: 3,
-  },
-
-  dropDownContainer: {
-    flexDirection: "column",
-    width: "100%",
   },
 
   input: {
     color: "#fff",
   },
 
+  chevronDown: {
+    position: "absolute",
+    alignSelf: "flex-end",
+    right: 38,
+  },
+
   itemAdd: {
     flexDirection: "row",
     justifyContent: "space-between",
-    // alignItems: "center",
     backgroundColor: "#101010",
     borderColor: "#080808",
     width: 350,
     height: 70,
-    borderRadius: "8%",
+    borderBottomLeftRadius: "8%",
+    borderBottomRightRadius: "8%",
     borderTopWidth: 2,
   },
 
@@ -196,15 +230,22 @@ const styles = StyleSheet.create({
   },
 
   addSetButton: {
-    backgroundColor: "#26abff",
-    // left: 38,
+    backgroundColor: "#9c9c9c",
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
     height: "100%",
-    borderRadius: "8%",
     width: 100,
-    borderTopLeftRadius: "0%",
-    borderBottomLeftRadius: "0%",
+    borderBottomRightRadius: "8%",
+  },
+
+  addSetButtonActive: {
+    backgroundColor: "#b19ff9",
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+    width: 100,
+    borderBottomRightRadius: "8%",
   },
 });

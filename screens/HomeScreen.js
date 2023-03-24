@@ -31,6 +31,7 @@ export default function HomeScreen({ navigation, route }) {
     }
   });
 
+  // when addingEntry is true, change screen to view newest entry
   React.useEffect(() => {
     if (entries.length > 0) {
       navigation.navigate("View Entry", {
@@ -147,7 +148,8 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: "50%",
-    backgroundColor: "#26abff",
+    backgroundColor: "#b19ff9",
+    // backgroundColor: "#26abff",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -161,7 +163,7 @@ const styles = StyleSheet.create({
 
   noEntriesText: {
     position: "absolute",
-    top: 350,
+    top: 325,
     fontSize: 22,
     color: "#9c9c9c",
   },
