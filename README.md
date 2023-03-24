@@ -2,5 +2,4 @@
 
 Lifting Log is a mobile application to help any avid gym-goer.
 
-Tracks workouts, exercises, and notes for each set so you can 
-look back at how you were feeling that day and on that specific set.
+A gym journal on your phone so you can keep track of your progress and optimize your workouts.
