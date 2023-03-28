@@ -36,9 +36,12 @@ export default function HomeScreen({ navigation, route }) {
   const getEntries = async () => {
     try {
       const data = await AsyncStorage.getItem("entryList");
-      const output = JSON.parse(data);
-      setEntries(output);
+      if (data != null) {
+        const output = JSON.parse(data);
+        setEntries(output);
+      }
     } catch (error) {
+      console.log("ERROR");
       console.error(error);
     }
   };
@@ -53,7 +56,6 @@ export default function HomeScreen({ navigation, route }) {
       );
     }
   });
-  
 
   // if deleting entry
   React.useEffect(() => {
@@ -112,7 +114,11 @@ export default function HomeScreen({ navigation, route }) {
     const newEntries = [...entries];
     newEntries.splice(index, 1);
     setEntries(newEntries);
-    saveEntries();
+    if (entries.length == 1) {
+      AsyncStorage.removeItem("entryList");
+    } else {
+      saveEntries();
+    }
   };
 
   const fromHomeNew = " ";
