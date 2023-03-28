@@ -1,24 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NativeBaseProvider, Button, AddIcon, Text } from "native-base";
-import {
-  StyleSheet,
-  View,
-  FlatList,
-  SafeAreaView,
-  SectionList,
-} from "react-native";
+import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import { EntryItem } from "../EntryItem";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen({ navigation, route }) {
+  useEffect(() => {
+    async function tempFunction() {
+      await getEntries();
+    }
+    tempFunction();
+    return () => {};
+  }, []);
+
   const current = new Date();
   const currDate = `${
     current.getMonth() + 1
   }/${current.getDate()}/${current.getFullYear()}`;
 
+  const [isLoading, setIsLoading] = React.useState(false);
   const [isRender, setisRender] = useState(false);
   const [entries, setEntries] = useState([]);
   const [addingEntry, setAddingEntry] = useState(false);
+
+  const saveEntries = async () => {
+    try {
+      const output = JSON.stringify(entries);
+      await AsyncStorage.setItem("entryList", output);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getEntries = async () => {
+    try {
+      const data = await AsyncStorage.getItem("entryList");
+      const output = JSON.parse(data);
+      setEntries(output);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // if coming from View Entry Screen, update entry's sets and name
   React.useEffect(() => {
@@ -28,6 +51,14 @@ export default function HomeScreen({ navigation, route }) {
         route.params.entryName,
         route.params.entryIndex
       );
+    }
+  });
+  
+
+  // if deleting entry
+  React.useEffect(() => {
+    if (route.params?.isDeleting) {
+      handleDeleteEntry(route.params.index);
     }
   });
 
@@ -56,6 +87,7 @@ export default function HomeScreen({ navigation, route }) {
       },
       ...newEntries,
     ]);
+    saveEntries();
   };
 
   const handleNewExercises = (exercises, entryName, index) => {
@@ -66,6 +98,7 @@ export default function HomeScreen({ navigation, route }) {
     currEntry["exercises"] = exercises;
     currEntry["title"] = entryName;
     setEntries([...entries]);
+    saveEntries();
   };
 
   const handleAddButton = () => {
@@ -73,11 +106,14 @@ export default function HomeScreen({ navigation, route }) {
     setAddingEntry(true);
   };
 
-  // const handleDeleteEntry = (index) => {
-  //   const newEntries = [...entries];
-  //   newEntries.splice(index, 1);
-  //   setEntries(newEntries);
-  // };
+  const handleDeleteEntry = (index) => {
+    route.params.isDeleting = null;
+    route.params.index = null;
+    const newEntries = [...entries];
+    newEntries.splice(index, 1);
+    setEntries(newEntries);
+    saveEntries();
+  };
 
   const fromHomeNew = " ";
 
@@ -98,7 +134,7 @@ export default function HomeScreen({ navigation, route }) {
 
         <FlatList
           // ListHeaderComponent={()=><Text alignSelf={"center"} fontSize={24} color={"#9a9a9a"}>entries: {entries.length}</Text>}
-          contentContainerStyle={{ top: 20, paddingBottom: 30 }}
+          contentContainerStyle={{ top: 20, paddingBottom: 110 }}
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
           data={entries}
           renderItem={renderItem}

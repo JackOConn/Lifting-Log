@@ -19,6 +19,7 @@ export const Exercise = ({ item, index }) => {
   const [weight, setWeight] = useState();
   const [reps, setReps] = useState();
   const [isRender, setisRender] = useState(false);
+  const [name, setName] = useState();
 
   const handleAddSet = (item, weight, reps) => {
     const newSets = [...item.exerciseSets];
@@ -26,6 +27,14 @@ export const Exercise = ({ item, index }) => {
     setReps(null);
     setWeight(null);
   };
+
+  React.useEffect(() => {
+    let counter = 0;
+    if (counter == 0) {
+      setName(item.exerciseName);
+      counter++;
+    }
+  });
 
   const renderItem = ({ item }) => {
     return (
@@ -52,19 +61,24 @@ export const Exercise = ({ item, index }) => {
             variant={"unstyled"}
             placeholder="exercise name"
             style={styles.exerciseInput}
-            value={item.exerciseName}
-            onChangeText={(val) => (item.exerciseName = val)}
+            value={name}
+            onChangeText={(val) => {
+              item.exerciseName = val;
+              setName(val);
+            }}
           ></Input>
           <Text style={styles.setsAmount}>
             {item.exerciseSets.length}
             {item.exerciseSets.length == 1 ? " set" : " sets"}
           </Text>
         </View>
-        {expanded ? (
-          <ChevronUpIcon style={styles.chevronDown}></ChevronUpIcon>
-        ) : (
-          <ChevronDownIcon style={styles.chevronDown}></ChevronDownIcon>
-        )}
+        <View style={styles.chevronContainer}>
+          {expanded ? (
+            <ChevronUpIcon style={styles.chevronDown}></ChevronUpIcon>
+          ) : (
+            <ChevronDownIcon style={styles.chevronDown}></ChevronDownIcon>
+          )}
+        </View>
       </TouchableOpacity>
       <Animated.View>
         {expanded && (
@@ -191,10 +205,20 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 
-  chevronDown: {
+  chevronContainer: {
     position: "absolute",
     alignSelf: "flex-end",
     right: 38,
+    // height: 40,
+    // width: 40,
+    // borderRadius: "50%",
+    // backgroundColor: "#303030",
+    justifyContent: "center",
+  },
+
+  chevronDown: {
+    color: "#9c9c9c",
+    alignSelf: "center",
   },
 
   itemAdd: {

@@ -104,7 +104,7 @@ export default function ViewEntryScreen({ navigation, route }) {
           data={exercises}
           renderItem={renderItem}
           extraData={isRender}
-          contentContainerStyle={{paddingBottom:30}}
+          contentContainerStyle={{ paddingBottom: 100 }}
         />
       </SafeAreaView>
       {/* List of Exercises */}
