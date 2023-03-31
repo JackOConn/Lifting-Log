@@ -1,6 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { Text, ChevronRightIcon } from "native-base";
+import { StyleSheet, View, TouchableOpacity, TouchableHighlight, LayoutAnimation } from "react-native";
+import {
+  Text,
+  ChevronRightIcon,
+  DeleteIcon,
+  Center,
+  Modal,
+  Button,
+} from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import {
   Swipeable,
@@ -9,27 +16,62 @@ import {
 
 export const EntryItem = ({ item, index }) => {
   const [isClosed, setIsClosed] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const isDeleting = " ";
 
-  const delay = ms => new Promise(res => setTimeout(res, ms));
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-  const closeEntry = async () => {
+  const closeEntry = async (shouldDelete) => {
     itemRef.close();
-    await delay(500);
-    navigation.navigate("Home", { index, isDeleting });
-  }
-  
+    if (shouldDelete) {
+      await delay(500);
+      navigation.navigate("Home", { index, isDeleting });
+    }
+  };
 
   const renderRight = () => {
     return (
-      <TouchableOpacity
-        onPress={() => {
-          closeEntry();
-        }}
-        style={styles.swipeView}
-      >
-        <Text color={"#fff"}>DELETE</Text>
-      </TouchableOpacity>
+      <>
+        <TouchableOpacity
+          onPress={() => {
+            setShowModal(true);
+          }}
+          style={styles.swipeView}
+        >
+          <DeleteIcon color={"#fff"} size={"lg"}></DeleteIcon>
+        </TouchableOpacity>
+        <Center>
+          <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+            <Modal.Content maxWidth="400px">
+              <Modal.Header bgColor={"#404040"} borderColor={"#303030"}>
+                <Text color={"#fff"} fontSize={18}>Are you sure you want to delete entry "{item.title}" done on {item.date}?</Text>
+              </Modal.Header>
+              <Modal.Footer bgColor={"#404040"} borderColor={"#303030"}>
+                <Button.Group space={4}>
+                  <Button
+                    bgColor={"#606060"}
+                    onPress={() => {
+                      closeEntry(false);
+                      setShowModal(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    bgColor={"#ff4137"}
+                    onPress={() => {
+                      closeEntry(true);
+                      setShowModal(false);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </Button.Group>
+              </Modal.Footer>
+            </Modal.Content>
+          </Modal>
+        </Center>
+      </>
     );
   };
 
@@ -45,9 +87,10 @@ export const EntryItem = ({ item, index }) => {
         onSwipeableWillClose={(itemRef) => setIsClosed(true)}
         onSwipeableWillOpen={(itemRef) => setIsClosed(false)}
       >
-        <TouchableOpacity
+        <TouchableHighlight
           key={index}
-          activeOpacity={1}
+          activeOpacity={0.5}
+          underlayColor={"#141414"}
           style={isClosed ? styles.item : styles.itemOpen}
           onPress={() => {
             navigation.navigate("View Entry", { item, index, fromHome });
@@ -62,7 +105,7 @@ export const EntryItem = ({ item, index }) => {
             </Text>
             <ChevronRightIcon style={styles.chevron}></ChevronRightIcon>
           </View>
-        </TouchableOpacity>
+        </TouchableHighlight>
       </Swipeable>
     </GestureHandlerRootView>
   );
@@ -95,8 +138,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: "8%",
     width: "90%",
     height: 100,
-    shadowColor: '#171717',
-    shadowOffset: {width: 4, height: 4},
+    shadowColor: "#171717",
+    shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 0.6,
     shadowRadius: 8,
   },
@@ -106,7 +149,7 @@ const styles = StyleSheet.create({
     width: 100,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "red",
+    backgroundColor: "#ff4137",
     borderTopRightRadius: "8%",
     borderBottomRightRadius: "8%",
   },

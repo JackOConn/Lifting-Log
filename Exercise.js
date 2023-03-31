@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   Animated,
+  LayoutAnimation
 } from "react-native";
 import {
   Text,
@@ -13,6 +14,7 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from "native-base";
+import { v4 as uuid } from "uuid";
 
 export const Exercise = ({ item, index }) => {
   const [expanded, setExpanded] = useState(false);
@@ -21,9 +23,28 @@ export const Exercise = ({ item, index }) => {
   const [isRender, setisRender] = useState(false);
   const [name, setName] = useState();
 
+  const layoutAnimConfig = {
+    update: {
+      duration: 300,
+      type: LayoutAnimation.Types.easeInEaseOut,
+      property: LayoutAnimation.Properties.scaleX,
+    },
+    create: {
+      duration: 500,
+      type: LayoutAnimation.Types.easeInEaseOut,
+      property: LayoutAnimation.Properties.opacity,
+    },
+    delete: {
+      duration: 150,
+      type: LayoutAnimation.Types.easeOut,
+      property: LayoutAnimation.Properties.opacity,
+    }
+  };
+
   const handleAddSet = (item, weight, reps) => {
     const newSets = [...item.exerciseSets];
-    item.exerciseSets = [...newSets, { weight: weight, reps: reps }];
+    item.exerciseSets = [...newSets, { setID: uuid(), weight: weight, reps: reps }];
+    LayoutAnimation.configureNext(layoutAnimConfig);
     setReps(null);
     setWeight(null);
   };
@@ -52,14 +73,14 @@ export const Exercise = ({ item, index }) => {
         activeOpacity={0.7}
         key={index}
         style={expanded ? styles.itemExpanded : styles.item}
-        onPress={() => setExpanded(!expanded)}
+        onPress={() => { LayoutAnimation.configureNext(layoutAnimConfig); setExpanded(!expanded)}}
       >
         <View>
           <Input
             left={15}
             width={"50%"}
             variant={"unstyled"}
-            placeholder="exercise name"
+            placeholder={"exercise name"}
             style={styles.exerciseInput}
             value={name}
             onChangeText={(val) => {

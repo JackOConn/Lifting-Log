@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { NativeBaseProvider, Button, AddIcon, Text } from "native-base";
-import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
+import { NativeBaseProvider, AddIcon, Text } from "native-base";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  SafeAreaView,
+  LayoutAnimation,
+} from "react-native";
 import { EntryItem } from "../EntryItem";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { v4 as uuid } from "uuid";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen({ navigation, route }) {
@@ -24,9 +31,9 @@ export default function HomeScreen({ navigation, route }) {
   const [entries, setEntries] = useState([]);
   const [addingEntry, setAddingEntry] = useState(false);
 
-  const saveEntries = async () => {
+  const saveEntries = async (entriesToSave) => {
     try {
-      const output = JSON.stringify(entries);
+      const output = JSON.stringify(entriesToSave);
       await AsyncStorage.setItem("entryList", output);
     } catch (error) {
       console.log(error);
@@ -66,7 +73,7 @@ export default function HomeScreen({ navigation, route }) {
 
   // when addingEntry is true, change screen to view newest entry
   React.useEffect(() => {
-    if (entries.length > 0) {
+    if (entries.length > 0 && addingEntry) {
       navigation.navigate("View Entry", {
         item: entries[0],
         index: 0,
@@ -83,13 +90,15 @@ export default function HomeScreen({ navigation, route }) {
     const newEntries = [...entries];
     setEntries([
       {
+        id: uuid(),
         title: newEntry,
         date: currDate,
         exercises: [],
       },
       ...newEntries,
     ]);
-    saveEntries();
+    LayoutAnimation.configureNext(layoutAnimConfig);
+    saveEntries(entries);
   };
 
   const handleNewExercises = (exercises, entryName, index) => {
@@ -100,12 +109,25 @@ export default function HomeScreen({ navigation, route }) {
     currEntry["exercises"] = exercises;
     currEntry["title"] = entryName;
     setEntries([...entries]);
-    saveEntries();
+    saveEntries(entries);
   };
 
   const handleAddButton = () => {
     handleNewEntry();
     setAddingEntry(true);
+  };
+
+  const layoutAnimConfig = {
+    update: {
+      duration: 500,
+      type: LayoutAnimation.Types.easeInEaseOut,
+    },
+    
+    delete: {
+      duration: 200,
+      type: LayoutAnimation.Types.easeInEaseOut,
+      property: LayoutAnimation.Properties.opacity,
+    },
   };
 
   const handleDeleteEntry = (index) => {
@@ -114,10 +136,11 @@ export default function HomeScreen({ navigation, route }) {
     const newEntries = [...entries];
     newEntries.splice(index, 1);
     setEntries(newEntries);
+    LayoutAnimation.configureNext(layoutAnimConfig);
     if (entries.length == 1) {
       AsyncStorage.removeItem("entryList");
     } else {
-      saveEntries();
+      saveEntries(newEntries);
     }
   };
 
@@ -142,6 +165,7 @@ export default function HomeScreen({ navigation, route }) {
           // ListHeaderComponent={()=><Text alignSelf={"center"} fontSize={24} color={"#9a9a9a"}>entries: {entries.length}</Text>}
           contentContainerStyle={{ top: 20, paddingBottom: 110 }}
           ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+          keyExtractor={(item) => item.id.toString()}
           data={entries}
           renderItem={renderItem}
           extraData={isRender}

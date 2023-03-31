@@ -11,10 +11,12 @@ import {
   Text,
   SafeAreaView,
   TouchableOpacity,
+  LayoutAnimation
 } from "react-native";
 import React, { useState } from "react";
 import { Exercise } from "../Exercise";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
+import { v4 as uuid } from "uuid";
 
 export default function ViewEntryScreen({ navigation, route }) {
   const [isRender, setisRender] = useState(false);
@@ -39,16 +41,35 @@ export default function ViewEntryScreen({ navigation, route }) {
     }
   });
 
+  const layoutAnimConfig = {
+    update: {
+      type: LayoutAnimation.Types.easeInEaseOut,
+      property: LayoutAnimation.Properties.scaleY,
+    },
+    create: {
+      duration: 200,
+      type: LayoutAnimation.Types.easeInEaseOut,
+      property: LayoutAnimation.Properties.scaleXY,
+    },
+    delete: {
+      duration: 200,
+      type: LayoutAnimation.Types.easeInEaseOut,
+      property: LayoutAnimation.Properties.opacity,
+    },
+  };
+
   const handleNewExercise = (exerciseName) => {
     route.params.exerciseName = null;
     const newExercises = [...exercises];
     setExercises([
       ...newExercises,
       {
+        exerciseID: uuid(),
         exerciseName: exerciseName,
         exerciseSets: [],
       },
     ]);
+    LayoutAnimation.configureNext(layoutAnimConfig);
   };
 
   const renderItem = ({ item, index }) => {
@@ -101,6 +122,7 @@ export default function ViewEntryScreen({ navigation, route }) {
       {/* List of Exercises */}
       <SafeAreaView behavior="padding" style={styles.container}>
         <KeyboardAwareFlatList
+          keyExtractor={(item) => item.exerciseID.toString()}
           data={exercises}
           renderItem={renderItem}
           extraData={isRender}
