@@ -4,10 +4,8 @@ import {
   View,
   TouchableOpacity,
   FlatList,
-  Animated,
-  LayoutAnimation
+  LayoutAnimation,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import {
   Text,
   Input,
@@ -16,58 +14,47 @@ import {
   ChevronUpIcon,
 } from "native-base";
 import { v4 as uuid } from "uuid";
+import { Set } from "./Set";
 
 export const Exercise = ({ item, index }) => {
   const [expanded, setExpanded] = useState(false);
-  const [weight, setWeight] = useState();
-  const [reps, setReps] = useState();
   const [isRender, setisRender] = useState(false);
   const [name, setName] = useState();
-  const [set, createSet] = useState();
 
   const layoutAnimConfig = {
     update: {
-      duration: 200,
-      type: LayoutAnimation.Types.easeInEaseOut,
+      duration: 300,
       property: LayoutAnimation.Properties.opacity,
+      type: LayoutAnimation.Types.easeInEaseOut,
     },
     create: {
-      duration: 500,
+      duration: 300,
       type: LayoutAnimation.Types.easeInEaseOut,
       property: LayoutAnimation.Properties.opacity,
     },
     delete: {
-      duration: 150,
-      type: LayoutAnimation.Types.easeOut,
+      duration: 200,
+      type: LayoutAnimation.Types.easeInEaseOut,
       property: LayoutAnimation.Properties.opacity,
-    }
+    },
   };
 
   const handleAddSet = (item, weight, reps) => {
     const newSets = [...item.exerciseSets];
-    weight = 135;
-    reps = 12;
-    item.exerciseSets = [...newSets, { setID: uuid(), weight: weight, reps: reps }];
+    item.exerciseSets = [
+      ...newSets,
+      { setID: uuid(), weight: weight, reps: reps },
+    ];
     setisRender(!isRender);
     LayoutAnimation.configureNext(layoutAnimConfig);
   };
 
   React.useEffect(() => {
-    let counter = 0;
-    if (counter == 0) {
-      setName(item.exerciseName);
-      counter++;
-    }
+    setName(item.exerciseName);
   });
 
   const renderItem = ({ item }) => {
-    return (
-      <View style={styles.item2}>
-        <Text style={styles.text2}>
-          
-        </Text>
-      </View>
-    );
+    return <Set item={item} index={index}></Set>;
   };
 
   return (
@@ -75,14 +62,16 @@ export const Exercise = ({ item, index }) => {
       <TouchableOpacity
         activeOpacity={0.7}
         key={index}
-        style={expanded ? styles.itemExpanded : styles.item}
-        onPress={() => {setExpanded(!expanded); LayoutAnimation.configureNext(layoutAnimConfig)}}
+        style={styles.item}
+        onPress={() => {
+          LayoutAnimation.configureNext(layoutAnimConfig);
+          setExpanded(!expanded);
+        }}
       >
         <View>
           <Input
             left={15}
             width={"80%"}
-
             variant={"unstyled"}
             placeholder={"exercise name"}
             style={styles.exerciseInput}
@@ -99,39 +88,48 @@ export const Exercise = ({ item, index }) => {
         </View>
         <View style={styles.chevronContainer}>
           {expanded ? (
-            <ChevronUpIcon style={styles.chevronDown} color={"#93988a"}></ChevronUpIcon>
+            <ChevronUpIcon
+              style={styles.chevronDown}
+              color={"#93988a"}
+            ></ChevronUpIcon>
           ) : (
-            <ChevronDownIcon style={styles.chevronDown} color={"#93988a"}></ChevronDownIcon>
+            <ChevronDownIcon
+              style={styles.chevronDown}
+              color={"#93988a"}
+            ></ChevronDownIcon>
           )}
         </View>
       </TouchableOpacity>
-      <Animated.View>
-        {expanded && (
-          <>
-            <FlatList
-              data={item.exerciseSets}
-              renderItem={renderItem}
-              extraData={isRender}
-            />
-            <View style={styles.itemAdd}>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  style={styles.addSetButton}
-                  onPress={() => {handleAddSet(item)}}
-                >
-                  <AddIcon size={"sm"} color={"#ced9bf"}></AddIcon>
-                  <Text color={"#ced9bf"} marginLeft={2} >add new set</Text>
-                </TouchableOpacity>
-            </View>
-          </>
-        )}
-      </Animated.View>
+      {expanded && (
+        <>
+          <FlatList
+            data={item.exerciseSets}
+            renderItem={renderItem}
+            extraData={isRender}
+          />
+          <View style={styles.itemAdd}>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.addSetButton}
+              onPress={() => {
+                handleAddSet(item);
+              }}
+            >
+              <AddIcon size={"sm"} color={"#ced9bf"}></AddIcon>
+              <Text color={"#ced9bf"} marginLeft={2}>
+                add new set
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   itemContainer: {
+    overflow: "hidden",
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
@@ -144,7 +142,7 @@ const styles = StyleSheet.create({
     borderColor: "#23292d",
     borderRadius: "0%",
     width: "100%",
-    height: 90,
+    height: 110,
     borderBottomWidth: 1,
   },
 
@@ -153,17 +151,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#14171a",
     alignItems: "flex-start",
     width: "100%",
-    height: 90,
-  },
-
-  item2: {
-    justifyContent: "center",
-    backgroundColor: "#14171a",
-    alignItems: "flex-start",
-    borderColor: "#23292d",
-    width: "100%",
-    height: 70,
-    borderTopWidth: 1,
+    height: 110,
   },
 
   text: {
@@ -215,20 +203,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#181818",
   },
 
-  // weightInput: {
-  //   alignSelf: "center",
-  //   width: 100,
-  //   left: 20,
-  //   top: 6,
-  // },
-
-  // repsInput: {
-  //   alignSelf: "center",
-  //   width: 75,
-  //   left: 13,
-  //   top: 6,
-  // },
-
   exerciseInput: {
     color: "#ced9bf",
     fontSize: 22,
@@ -244,6 +218,6 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 1.25,
     borderColor: "#303030",
-    borderStyle: 'dashed',
+    borderStyle: "dashed",
   },
 });

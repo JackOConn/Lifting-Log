@@ -122,7 +122,6 @@ export default function HomeScreen({ navigation, route }) {
       duration: 500,
       type: LayoutAnimation.Types.easeInEaseOut,
     },
-    
     delete: {
       duration: 200,
       type: LayoutAnimation.Types.easeInEaseOut,

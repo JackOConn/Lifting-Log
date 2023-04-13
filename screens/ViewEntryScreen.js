@@ -83,7 +83,7 @@ export default function ViewEntryScreen({ navigation, route }) {
         <SafeAreaView style={styles.headerButtonsContainer}>
           {/* Back Button */}
           <Button
-            paddingLeft={8}
+            paddingLeft={6}
             alignSelf={"flex-start"}
             variant={"link"}
             size={"lg"}
@@ -95,7 +95,7 @@ export default function ViewEntryScreen({ navigation, route }) {
               })
             }
           >
-            <ChevronLeftIcon size={"md"} color={"#82b3c9"}></ChevronLeftIcon>
+            <ChevronLeftIcon size={"lg"} color={"#82b3c9"}></ChevronLeftIcon>
           </Button>
           {/* Back Button */}
         </SafeAreaView>
