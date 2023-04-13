@@ -163,8 +163,8 @@ export default function HomeScreen({ navigation, route }) {
 
         <FlatList
           // ListHeaderComponent={()=><Text alignSelf={"center"} fontSize={24} color={"#9a9a9a"}>entries: {entries.length}</Text>}
-          contentContainerStyle={{ top: 20, paddingBottom: 110 }}
-          ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+          contentContainerStyle={{paddingBottom: 110 }}
+          ItemSeparatorComponent={() => <View style={{ height: 0 }} />}
           keyExtractor={(item) => item.id.toString()}
           data={entries}
           renderItem={renderItem}
@@ -178,7 +178,7 @@ export default function HomeScreen({ navigation, route }) {
           style={styles.addButton}
           onPress={() => handleAddButton()}
         >
-          <AddIcon size={"md"} color={"#fff"}></AddIcon>
+          <AddIcon size={"md"} color={"#ced9bf"}></AddIcon>
         </TouchableOpacity>
       </View>
     </NativeBaseProvider>
@@ -189,8 +189,11 @@ const styles = StyleSheet.create({
   header: {
     height: "11%",
     flexDirection: "column",
-    backgroundColor: "#151515",
+    // backgroundColor: "#2c3439",
+    backgroundColor: "#08090a",
     justifyContent: "center",
+    borderBottomWidth: 1,
+    borderColor: "#23292d",
   },
 
   headerText: {
@@ -200,7 +203,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: "#080808",
+    backgroundColor: "#08090a",
     paddingBottom: 0.3,
   },
 
@@ -214,8 +217,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: "50%",
-    backgroundColor: "#b19ff9",
-    // backgroundColor: "#26abff",
+    backgroundColor: "#82b3c9",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -231,6 +233,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 325,
     fontSize: 22,
-    color: "#9c9c9c",
+    color: "#ced9bf",
+
   },
 });

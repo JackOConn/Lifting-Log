@@ -7,6 +7,7 @@ import {
   Animated,
   LayoutAnimation
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import {
   Text,
   Input,
@@ -22,12 +23,13 @@ export const Exercise = ({ item, index }) => {
   const [reps, setReps] = useState();
   const [isRender, setisRender] = useState(false);
   const [name, setName] = useState();
+  const [set, createSet] = useState();
 
   const layoutAnimConfig = {
     update: {
-      duration: 300,
+      duration: 200,
       type: LayoutAnimation.Types.easeInEaseOut,
-      property: LayoutAnimation.Properties.scaleX,
+      property: LayoutAnimation.Properties.opacity,
     },
     create: {
       duration: 500,
@@ -43,10 +45,11 @@ export const Exercise = ({ item, index }) => {
 
   const handleAddSet = (item, weight, reps) => {
     const newSets = [...item.exerciseSets];
+    weight = 135;
+    reps = 12;
     item.exerciseSets = [...newSets, { setID: uuid(), weight: weight, reps: reps }];
+    setisRender(!isRender);
     LayoutAnimation.configureNext(layoutAnimConfig);
-    setReps(null);
-    setWeight(null);
   };
 
   React.useEffect(() => {
@@ -61,7 +64,7 @@ export const Exercise = ({ item, index }) => {
     return (
       <View style={styles.item2}>
         <Text style={styles.text2}>
-          {item.reps} reps @ {item.weight} lbs.{" "}
+          
         </Text>
       </View>
     );
@@ -73,12 +76,13 @@ export const Exercise = ({ item, index }) => {
         activeOpacity={0.7}
         key={index}
         style={expanded ? styles.itemExpanded : styles.item}
-        onPress={() => { LayoutAnimation.configureNext(layoutAnimConfig); setExpanded(!expanded)}}
+        onPress={() => {setExpanded(!expanded); LayoutAnimation.configureNext(layoutAnimConfig)}}
       >
         <View>
           <Input
             left={15}
-            width={"50%"}
+            width={"80%"}
+
             variant={"unstyled"}
             placeholder={"exercise name"}
             style={styles.exerciseInput}
@@ -95,9 +99,9 @@ export const Exercise = ({ item, index }) => {
         </View>
         <View style={styles.chevronContainer}>
           {expanded ? (
-            <ChevronUpIcon style={styles.chevronDown}></ChevronUpIcon>
+            <ChevronUpIcon style={styles.chevronDown} color={"#93988a"}></ChevronUpIcon>
           ) : (
-            <ChevronDownIcon style={styles.chevronDown}></ChevronDownIcon>
+            <ChevronDownIcon style={styles.chevronDown} color={"#93988a"}></ChevronDownIcon>
           )}
         </View>
       </TouchableOpacity>
@@ -110,43 +114,14 @@ export const Exercise = ({ item, index }) => {
               extraData={isRender}
             />
             <View style={styles.itemAdd}>
-              <View style={styles.weightInput}>
-                <Text color={"#fff"}>Weight</Text>
-                <Input
-                  value={weight}
-                  keyboardType="numeric"
-                  style={styles.input}
-                  variant={"underlined"}
-                  onChangeText={(val) => setWeight(val)}
-                />
-                <Text style={styles.addSetText}></Text>
-              </View>
-              <View style={styles.repsInput}>
-                <Text color={"#fff"}>Reps</Text>
-                <Input
-                  keyboardType="numeric"
-                  style={styles.input}
-                  variant={"underlined"}
-                  value={reps}
-                  onChangeText={(val) => setReps(val)}
-                />
-                <Text style={styles.addSetText}></Text>
-              </View>
-              <View>
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  style={
-                    !weight || !reps
-                      ? styles.addSetButton
-                      : styles.addSetButtonActive
-                  }
-                  disabled={!weight || !reps}
-                  onPress={() => handleAddSet(item, weight, reps)}
+                  style={styles.addSetButton}
+                  onPress={() => {handleAddSet(item)}}
                 >
-                  <AddIcon size={"sm"} color={"#fff"}></AddIcon>
-                  {/* <Text>ADD</Text> */}
+                  <AddIcon size={"sm"} color={"#ced9bf"}></AddIcon>
+                  <Text color={"#ced9bf"} marginLeft={2} >add new set</Text>
                 </TouchableOpacity>
-              </View>
             </View>
           </>
         )}
@@ -160,59 +135,56 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 5,
   },
 
   item: {
     justifyContent: "center",
-    backgroundColor: "#101010",
+    backgroundColor: "#14171a",
     alignItems: "flex-start",
-    borderColor: "#202020",
-    borderRadius: "8%",
-    width: "90%",
+    borderColor: "#23292d",
+    borderRadius: "0%",
+    width: "100%",
     height: 90,
+    borderBottomWidth: 1,
   },
 
   itemExpanded: {
     justifyContent: "center",
-    backgroundColor: "#101010",
+    backgroundColor: "#14171a",
     alignItems: "flex-start",
-    borderColor: "#202020",
-    borderTopLeftRadius: "8%",
-    borderTopRightRadius: "8%",
-    width: "90%",
+    width: "100%",
     height: 90,
   },
 
   item2: {
     justifyContent: "center",
-    backgroundColor: "#101010",
+    backgroundColor: "#14171a",
     alignItems: "flex-start",
-    borderColor: "#080808",
+    borderColor: "#23292d",
     width: "100%",
     height: 70,
-    borderTopWidth: 2,
+    borderTopWidth: 1,
   },
 
   text: {
     fontSize: 22,
     fontWeight: "bold",
     marginLeft: 30,
-    color: "#fff",
+    color: "#ced9bf",
     top: 4,
   },
 
   text2: {
     fontSize: 16,
     marginLeft: 30,
-    color: "#fff",
+    color: "#ced9bf",
     top: 3,
   },
 
   setsAmount: {
     fontSize: 12,
     marginLeft: 28,
-    color: "#9c9c9c",
+    color: "#93988a",
     top: -3,
   },
 
@@ -222,75 +194,56 @@ const styles = StyleSheet.create({
     top: 3,
   },
 
-  input: {
-    color: "#fff",
-  },
-
   chevronContainer: {
     position: "absolute",
     alignSelf: "flex-end",
     right: 38,
-    // height: 40,
-    // width: 40,
-    // borderRadius: "50%",
-    // backgroundColor: "#303030",
     justifyContent: "center",
   },
 
   chevronDown: {
-    color: "#9c9c9c",
+    color: "#93988a",
     alignSelf: "center",
   },
 
   itemAdd: {
     flexDirection: "row",
-    justifyContent: "space-between",
     backgroundColor: "#101010",
     borderColor: "#080808",
-    width: 350,
+    width: "100%",
     height: 70,
-    borderBottomLeftRadius: "8%",
-    borderBottomRightRadius: "8%",
-    borderTopWidth: 2,
+    borderBottomColor: "#181818",
   },
 
-  weightInput: {
-    alignSelf: "center",
-    width: 100,
-    left: 20,
-    top: 6,
-  },
+  // weightInput: {
+  //   alignSelf: "center",
+  //   width: 100,
+  //   left: 20,
+  //   top: 6,
+  // },
 
-  repsInput: {
-    alignSelf: "center",
-    width: 75,
-    left: 13,
-    top: 6,
-  },
+  // repsInput: {
+  //   alignSelf: "center",
+  //   width: 75,
+  //   left: 13,
+  //   top: 6,
+  // },
 
   exerciseInput: {
-    color: "#fff",
+    color: "#ced9bf",
     fontSize: 22,
     top: 4,
   },
 
   addSetButton: {
-    backgroundColor: "#9c9c9c",
-    alignSelf: "center",
+    flexDirection: "row",
+    backgroundColor: "#08090a",
     justifyContent: "center",
     alignItems: "center",
     height: "100%",
-    width: 100,
-    borderBottomRightRadius: "8%",
-  },
-
-  addSetButtonActive: {
-    backgroundColor: "#b19ff9",
-    alignSelf: "center",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100%",
-    width: 100,
-    borderBottomRightRadius: "8%",
+    width: "100%",
+    borderWidth: 1.25,
+    borderColor: "#303030",
+    borderStyle: 'dashed',
   },
 });

@@ -103,7 +103,7 @@ export const EntryItem = ({ item, index }) => {
               {item.exercises.length}{" "}
               {item.exercises.length == 1 ? "exercise" : "exercises"}
             </Text>
-            <ChevronRightIcon style={styles.chevron}></ChevronRightIcon>
+            <ChevronRightIcon style={styles.chevron} color={"#93988a"}></ChevronRightIcon>
           </View>
         </TouchableHighlight>
       </Swipeable>
@@ -120,38 +120,34 @@ const styles = StyleSheet.create({
   item: {
     alignSelf: "center",
     justifyContent: "center",
-    backgroundColor: "#101010",
+    backgroundColor: "#14171a",
     alignItems: "flex-start",
-    borderColor: "#202020",
-    borderRadius: "8%",
-    width: "90%",
+    width: "100%",
     height: 100,
+    borderBottomWidth: 1,
+    borderColor: "#23292d",
   },
 
   itemOpen: {
     alignSelf: "center",
     justifyContent: "center",
-    backgroundColor: "#101010",
+    backgroundColor: "#14171a",
     alignItems: "flex-start",
-    borderColor: "#202020",
-    borderTopLeftRadius: "8%",
-    borderBottomLeftRadius: "8%",
-    width: "90%",
+    borderBottomWidth: 1,
+    borderColor: "#23292d",
+    width: "100%",
     height: 100,
     shadowColor: "#171717",
     shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.6,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
   },
 
   swipeView: {
-    right: -20,
     width: 100,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#ff4137",
-    borderTopRightRadius: "8%",
-    borderBottomRightRadius: "8%",
   },
 
   textInput: {
@@ -168,27 +164,27 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: "bold",
     fontSize: 22,
-    marginLeft: 29,
-    color: "#fff",
+    marginLeft: 39,
+    color: "#ced9bf",
     top: 6,
   },
 
   date: {
     fontSize: 12,
-    marginLeft: 30,
-    color: "#9c9c9c",
+    marginLeft: 40,
+    color: "#93988a",
     top: 6,
   },
 
   exerciseLength: {
     fontSize: 12,
-    marginLeft: 30,
-    color: "#9c9c9c",
+    marginLeft: 40,
+    color: "#93988a",
     top: 3,
   },
 
   chevron: {
     position: "absolute",
-    left: 300,
+    left: 325,
   },
 });

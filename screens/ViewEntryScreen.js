@@ -4,6 +4,7 @@ import {
   AddIcon,
   ArrowBackIcon,
   Input,
+  ChevronLeftIcon
 } from "native-base";
 import {
   View,
@@ -44,12 +45,11 @@ export default function ViewEntryScreen({ navigation, route }) {
   const layoutAnimConfig = {
     update: {
       type: LayoutAnimation.Types.easeInEaseOut,
-      property: LayoutAnimation.Properties.scaleY,
     },
     create: {
       duration: 200,
       type: LayoutAnimation.Types.easeInEaseOut,
-      property: LayoutAnimation.Properties.scaleXY,
+      property: LayoutAnimation.Properties.opacity,
     },
     delete: {
       duration: 200,
@@ -95,7 +95,7 @@ export default function ViewEntryScreen({ navigation, route }) {
               })
             }
           >
-            <ArrowBackIcon size={"md"} color={"#b19ff9"}></ArrowBackIcon>
+            <ChevronLeftIcon size={"md"} color={"#82b3c9"}></ChevronLeftIcon>
           </Button>
           {/* Back Button */}
         </SafeAreaView>
@@ -105,7 +105,7 @@ export default function ViewEntryScreen({ navigation, route }) {
       {/* Title & Date */}
       <View style={styles.titleAndDateContainer}>
         <Input
-          top={2}
+          top={1}
           alignSelf={"center"}
           placeholder="entry name"
           maxLength={20}
@@ -136,7 +136,7 @@ export default function ViewEntryScreen({ navigation, route }) {
           style={styles.addButton}
           onPress={() => handleNewExercise()}
         >
-          <AddIcon size={"md"} color={"#fff"}></AddIcon>
+          <AddIcon size={"md"} color={"#ced9bf"}></AddIcon>
         </TouchableOpacity>
       </View>
     </NativeBaseProvider>
@@ -146,36 +146,39 @@ export default function ViewEntryScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   header: {
     height: "11%",
-    backgroundColor: "#151515",
+    backgroundColor: "#08090a",
     maxWidth: "100%",
     left: 0,
     bottom: 0,
     right: 0,
+    borderBottomWidth: 1,
+    borderColor: "#23292d",
   },
 
   container: {
     flex: 1,
     flexGrow: 1,
-    backgroundColor: "#080808",
-    // backgroundColor: "red"
+    backgroundColor: "#08090a",
   },
 
   titleAndDateContainer: {
     height: "11%",
-    backgroundColor: "#080808",
+    backgroundColor: "#08090a",
+    borderBottomWidth: 1,
+    borderColor: "#23292d",
   },
 
   textTitle: {
-    color: "#fff",
+    color: "#ced9bf",
     fontSize: 36,
     alignSelf: "center",
     top: 20,
   },
 
   textDate: {
-    color: "#9c9c9c",
+    color: "#93988a",
     alignSelf: "center",
-    top: 10,
+    top: 6,
   },
 
   headerButtonsContainer: {
@@ -193,13 +196,13 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: "50%",
-    backgroundColor: "#b19ff9",
+    backgroundColor: "#82b3c9",
     justifyContent: "center",
     alignItems: "center",
   },
 
   textInput: {
-    color: "#fff",
+    color: "#ced9bf",
     fontSize: 36,
     textAlign: "center",
     fontWeight: "bold",
