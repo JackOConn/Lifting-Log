@@ -103,6 +103,7 @@ export const Exercise = ({ item, index }) => {
       {expanded && (
         <>
           <FlatList
+            keyExtractor={(item) => item.setID.toString()}
             data={item.exerciseSets}
             renderItem={renderItem}
             extraData={isRender}

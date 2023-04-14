@@ -1,11 +1,15 @@
 {
   "expo": {
-    "name": "lifting-log",
+    "name": "Lifting Log",
     "slug": "lifting-log",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
     ],
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/734159c2-6769-4d1a-bf07-8a54fb39900d"
+    },
     "extra": {
       "eas": {
         "projectId": "734159c2-6769-4d1a-bf07-8a54fb39900d"

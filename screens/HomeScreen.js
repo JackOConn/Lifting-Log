@@ -13,6 +13,7 @@ import { v4 as uuid } from "uuid";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen({ navigation, route }) {
+
   useEffect(() => {
     async function tempFunction() {
       await getEntries();
@@ -188,8 +189,8 @@ const styles = StyleSheet.create({
   header: {
     height: "11%",
     flexDirection: "column",
-    // backgroundColor: "#2c3439",
     backgroundColor: "#08090a",
+    // backgroundColor: "blue",
     justifyContent: "center",
     borderBottomWidth: 1,
     borderColor: "#23292d",

@@ -89,10 +89,8 @@ export const EntryItem = ({ item, index }) => {
         onSwipeableWillClose={(itemRef) => setIsClosed(true)}
         onSwipeableWillOpen={(itemRef) => setIsClosed(false)}
       >
-        <TouchableHighlight
+        <Pressable
           key={index}
-          activeOpacity={0.5}
-          underlayColor={"#0d0f11"}
           style={isClosed ? styles.item : styles.itemOpen}
           onPress={() => {
             navigation.navigate("View Entry", { item, index, fromHome });
@@ -112,7 +110,7 @@ export const EntryItem = ({ item, index }) => {
             ></ChevronRightIcon>
           </View>
           {/* </View> */}
-        </TouchableHighlight>
+        </Pressable>
       </Swipeable>
     </GestureHandlerRootView>
   );
