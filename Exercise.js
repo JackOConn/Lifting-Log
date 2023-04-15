@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   FlatList,
   LayoutAnimation,
+  Pressable,
+  Modal
 } from "react-native";
 import {
   Text,
@@ -12,14 +14,23 @@ import {
   AddIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  DeleteIcon,
 } from "native-base";
+import {
+  Swipeable,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
 import { v4 as uuid } from "uuid";
 import { Set } from "./Set";
 
-export const Exercise = ({ item, index }) => {
+export const Exercise = ({ item, index, entryIndex }) => {
   const [expanded, setExpanded] = useState(false);
   const [isRender, setisRender] = useState(false);
   const [name, setName] = useState();
+  const [showModal, setShowModal] = useState(false);
+  const [isClosed, setIsClosed] = useState(true);
+  const isDeleting = " ";
 
   const layoutAnimConfig = {
     update: {
@@ -39,6 +50,16 @@ export const Exercise = ({ item, index }) => {
     },
   };
 
+  const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+  const closeEntry = async (shouldDelete) => {
+    itemRef.close();
+    if (shouldDelete) {
+      await delay(500);
+      navigation.navigate("View Entry", { exerciseIndex: index, isDeleting, index: entryIndex });
+    }
+  };
+
   const handleAddSet = (item, weight, reps) => {
     const newSets = [...item.exerciseSets];
     item.exerciseSets = [
@@ -53,78 +74,137 @@ export const Exercise = ({ item, index }) => {
     setName(item.exerciseName);
   });
 
-  const renderItem = ({ item }) => {
+  const renderRight = () => {
+    return (
+      <>
+        <TouchableOpacity
+          onPress={() => {
+            setShowModal(true);
+          }}
+          style={styles.swipeView}
+        >
+          <DeleteIcon color={"#fff"} size={"lg"}></DeleteIcon>
+        </TouchableOpacity>
+
+        <Modal
+          style={styles.modalView}
+          visible={showModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => {
+            setShowModal(false);
+          }}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Pressable
+                style={styles.modalDelete}
+                onPress={() => {
+                  setShowModal(false);
+                  closeEntry(true);
+                }}
+              >
+                <Text style={styles.modalDeleteText}>Delete</Text>
+              </Pressable>
+              <Pressable
+                style={styles.modalCancel}
+                onPress={() => {
+                  setShowModal(false);
+                  closeEntry(false);
+                }}
+              >
+                <Text style={styles.modalCancelText}>Cancel</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      </>
+    );
+  };
+
+  const renderItem = ({ item, index }) => {
     return <Set item={item} index={index}></Set>;
   };
 
+  const navigation = useNavigation();
+  let itemRef;
   return (
-    <View style={styles.itemContainer}>
-      <TouchableOpacity
-        activeOpacity={0.7}
-        key={index}
-        style={styles.item}
-        onPress={() => {
-          LayoutAnimation.configureNext(layoutAnimConfig);
-          setExpanded(!expanded);
-        }}
+    <GestureHandlerRootView>
+      <Swipeable
+        ref={(ref) => (itemRef = ref)}
+        overshootFriction={30}
+        renderRightActions={renderRight}
+        onSwipeableWillClose={(itemRef) => setIsClosed(true)}
+        onSwipeableWillOpen={(itemRef) => setIsClosed(false)}
       >
-        <View>
-          <Input
-            left={15}
-            width={"80%"}
-            variant={"unstyled"}
-            placeholder={"exercise name"}
-            style={styles.exerciseInput}
-            value={name}
-            onChangeText={(val) => {
-              item.exerciseName = val;
-              setName(val);
-            }}
-          ></Input>
-          <Text style={styles.setsAmount}>
-            {item.exerciseSets.length}
-            {item.exerciseSets.length == 1 ? " set" : " sets"}
-          </Text>
-        </View>
-        <View style={styles.chevronContainer}>
-          {expanded ? (
-            <ChevronUpIcon
-              style={styles.chevronDown}
-              color={"#93988a"}
-            ></ChevronUpIcon>
-          ) : (
-            <ChevronDownIcon
-              style={styles.chevronDown}
-              color={"#93988a"}
-            ></ChevronDownIcon>
-          )}
-        </View>
-      </TouchableOpacity>
-      {expanded && (
-        <>
-          <FlatList
-            keyExtractor={(item) => item.setID.toString()}
-            data={item.exerciseSets}
-            renderItem={renderItem}
-            extraData={isRender}
-          />
-          <View style={styles.itemAdd}>
-            <TouchableOpacity
+        <View style={styles.itemContainer}>
+          <View style={styles.item}>
+            <Input
+              left={15}
+              width={"80%"}
+              variant={"unstyled"}
+              placeholder={"exercise name"}
+              style={styles.exerciseInput}
+              value={name}
+              onChangeText={(val) => {
+                item.exerciseName = val;
+                setName(val);
+              }}
+            ></Input>
+            <Text style={styles.setsAmount}>
+              {item.exerciseSets.length}
+              {item.exerciseSets.length == 1 ? " set" : " sets"}
+            </Text>
+            <Pressable
               activeOpacity={0.7}
-              style={styles.addSetButton}
+              key={index}
+              style={styles.chevronContainer}
               onPress={() => {
-                handleAddSet(item);
+                LayoutAnimation.configureNext(layoutAnimConfig);
+                setExpanded(!expanded);
               }}
             >
-              <AddIcon size={"sm"} color={"#ced9bf"}></AddIcon>
-              <Text color={"#ced9bf"} marginLeft={2}>
-                add new set
-              </Text>
-            </TouchableOpacity>
+              {expanded ? (
+                <ChevronUpIcon
+                  style={styles.chevronDown}
+                  color={"#93988a"}
+                ></ChevronUpIcon>
+              ) : (
+                <ChevronDownIcon
+                  style={styles.chevronDown}
+                  color={"#93988a"}
+                ></ChevronDownIcon>
+              )}
+            </Pressable>
           </View>
-        </>
-      )}
-    </View>
+
+          {expanded && (
+            <>
+              <FlatList
+                keyExtractor={(item) => item.setID.toString()}
+                data={item.exerciseSets}
+                renderItem={renderItem}
+                extraData={isRender}
+              />
+              <View style={styles.itemAdd}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={styles.addSetButton}
+                  onPress={() => {
+                    handleAddSet(item);
+                  }}
+                >
+                  <AddIcon size={"sm"} color={"#ced9bf"}></AddIcon>
+                  <Text color={"#ced9bf"} marginLeft={2}>
+                    add new set
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        </View>
+      </Swipeable>
+    </GestureHandlerRootView>
   );
 };
 
@@ -184,9 +264,10 @@ const styles = StyleSheet.create({
   },
 
   chevronContainer: {
+    height: 60,
+    width: 60,
     position: "absolute",
-    alignSelf: "flex-end",
-    right: 38,
+    right: 25,
     justifyContent: "center",
   },
 
@@ -220,5 +301,63 @@ const styles = StyleSheet.create({
     borderWidth: 1.25,
     borderColor: "#303030",
     borderStyle: "dashed",
+  },
+
+  
+  swipeView: {
+    width: 100,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ff4137",
+  },
+
+  modalContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+  },
+
+  modalView: {
+    justifyContent: "flex-end",
+  },
+
+  modalContent: {
+    width: "95%",
+    height: "25%",
+    overflow: "hidden",
+    bottom: 0,
+  },
+
+  modalDelete: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#14171a",
+    height: "35%",
+    width: "100%",
+    borderRadius: "15%",
+  },
+
+  modalCancel: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#14171a",
+    height: "35%",
+    width: "100%",
+    borderRadius: "15%",
+    top: 8,
+  },
+
+  modalDeleteText: {
+    fontWeight: "bold",
+    color: "#ff4137",
+    fontSize: 22,
+  },
+
+  modalCancelText: {
+    fontWeight: "bold",
+    color: "#82b3c9",
+    fontSize: 22,
   },
 });

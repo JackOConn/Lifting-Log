@@ -106,6 +106,7 @@ export default function HomeScreen({ navigation, route }) {
     route.params.exercises = null;
     route.params.entryIndex = null;
     route.params.entryName = null;
+    console.log(index);
     const currEntry = entries[index];
     currEntry["exercises"] = exercises;
     currEntry["title"] = entryName;

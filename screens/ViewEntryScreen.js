@@ -23,6 +23,7 @@ export default function ViewEntryScreen({ navigation, route }) {
   const [isRender, setisRender] = useState(false);
   const [exercises, setExercises] = useState([]);
   const [entryName, setEntryName] = useState();
+  const [date, setDate] = useState();
   const [isNew, setIsNew] = useState(false);
 
   // if route is from Home Screen, populate exercises and entry name
@@ -31,6 +32,7 @@ export default function ViewEntryScreen({ navigation, route }) {
       route.params.fromHome = null;
       setExercises(route.params.item.exercises);
       setEntryName(route.params.item.title);
+      setDate(route.params.item.date);
     }
   });
 
@@ -38,12 +40,21 @@ export default function ViewEntryScreen({ navigation, route }) {
   React.useEffect(() => {
     if (route.params?.fromHomeNew) {
       route.params.fromHomeNew = null;
+      setDate(route.params.item.date);
       setIsNew(true);
     }
   });
 
+    // if deleting exercise
+    React.useEffect(() => {
+      if (route.params?.isDeleting) {
+        handleDeleteExercise(route.params.exerciseIndex);
+      }
+    });
+
   const layoutAnimConfig = {
     update: {
+      duration: 500,
       type: LayoutAnimation.Types.easeInEaseOut,
     },
     create: {
@@ -72,8 +83,17 @@ export default function ViewEntryScreen({ navigation, route }) {
     LayoutAnimation.configureNext(layoutAnimConfig);
   };
 
+  const handleDeleteExercise = (index) => {
+    route.params.isDeleting = null;
+    const newExercises = [...exercises];
+    newExercises.splice(index, 1);
+    setExercises(newExercises);
+    setisRender(!isRender);
+    LayoutAnimation.configureNext(layoutAnimConfig);
+  };
+
   const renderItem = ({ item, index }) => {
-    return <Exercise item={item} index={index}></Exercise>;
+    return <Exercise item={item} index={index} entryIndex={route.params.index}></Exercise>;
   };
 
   return (
@@ -88,11 +108,11 @@ export default function ViewEntryScreen({ navigation, route }) {
             variant={"link"}
             size={"lg"}
             onPress={() =>
-              navigation.navigate("Home", {
+              {navigation.navigate("Home", {
                 exercises,
                 entryIndex: route.params.index,
                 entryName,
-              })
+              })}
             }
           >
             <ChevronLeftIcon size={"lg"} color={"#82b3c9"}></ChevronLeftIcon>
@@ -115,7 +135,7 @@ export default function ViewEntryScreen({ navigation, route }) {
           value={entryName}
           onChangeText={(val) => setEntryName(val)}
         ></Input>
-        <Text style={styles.textDate}>{route.params.item.date}</Text>
+        <Text style={styles.textDate}>{date}</Text>
       </View>
       {/* Title & Date */}
 
