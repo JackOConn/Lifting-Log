@@ -1,14 +1,18 @@
 import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { Input, ThreeDotsIcon, InputGroup, InputRightAddon } from "native-base";
+import { View, StyleSheet, Pressable } from "react-native";
+import { Input, InputGroup, InputRightAddon, DeleteIcon } from "native-base";
+import { COLORS } from "../colors";
+import { useNavigation } from "@react-navigation/native";
 
-export const Set = ({ item }) => {
+export const Set = ({ set, index, exercise, entryIndex }) => {
   const [weight, setWeight] = useState();
   const [reps, setReps] = useState();
+  const deletingSet = " ";
+  const navigation = useNavigation();
 
   React.useEffect(() => {
-    setWeight(item.weight);
-    setReps(item.reps);
+    setWeight(set.weight);
+    setReps(set.reps);
   });
 
   return (
@@ -26,17 +30,17 @@ export const Set = ({ item }) => {
           }}
           fontSize={22}
           keyboardType="numeric"
-          color={"#ced9bf"}
+          color={COLORS.white}
           value={weight}
-          borderColor={"#93988a"}
+          borderColor={COLORS.gray}
           onChangeText={(val) => {
-            item.weight = val;
+            set.weight = val;
             setWeight(val);
           }}
         />
         <InputRightAddon
-          bg={"#93988a"}
-          borderColor={"#93988a"}
+          bg={COLORS.gray}
+          borderColor={COLORS.gray}
           children={"lbs"}
         />
       </InputGroup>
@@ -53,22 +57,38 @@ export const Set = ({ item }) => {
           }}
           fontSize={22}
           keyboardType="numeric"
-          color={"#ced9bf"}
-          borderColor={"#93988a"}
+          color={COLORS.white}
+          borderColor={COLORS.gray}
           value={reps}
           onChangeText={(val) => {
-            item.reps = val;
+            set.reps = val;
             setReps(val);
           }}
         />
         <InputRightAddon
-          bg={"#93988a"}
-          borderColor={"#93988a"}
+          bg={COLORS.gray}
+          borderColor={COLORS.gray}
           children={"reps"}
         />
       </InputGroup>
       <View justifyContent={"center"} alignItems={"center"} width={"25%"}>
-        <ThreeDotsIcon color={"#93988a"}></ThreeDotsIcon>
+        <Pressable
+          onPress={() => {
+            navigation.navigate("View Entry", {
+              setIndex: index,
+              index: entryIndex,
+              deletingSet,
+              exercise,
+            });
+          }}
+          height={"50%"}
+          width={"50%"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          // backgroundColor={"#fff"}
+        >
+          <DeleteIcon color={COLORS.red}></DeleteIcon>
+        </Pressable>
       </View>
     </View>
   );
@@ -78,9 +98,9 @@ const styles = StyleSheet.create({
   set: {
     minWidth: "100%",
     flexDirection: "row",
-    backgroundColor: "#14171a",
+    backgroundColor: COLORS.dark_gray,
     height: 100,
     borderTopWidth: 1,
-    borderColor: "#23292d",
+    borderColor: COLORS.black,
   },
 });

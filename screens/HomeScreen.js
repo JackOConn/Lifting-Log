@@ -1,36 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { NativeBaseProvider, AddIcon, Text } from "native-base";
-import {
-  StyleSheet,
-  View,
-  FlatList,
-  SafeAreaView,
-  LayoutAnimation,
-} from "react-native";
-import { EntryItem } from "../EntryItem";
+import { CalendarList } from "react-native-calendars";
+import { COLORS } from "../colors";
+import { StyleSheet, View, SafeAreaView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { v4 as uuid } from "uuid";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen({ navigation, route }) {
+  const current = new Date();
+  const fromHome = " ";
+  const fromHomeNew = " ";
+  const [entries, setEntries] = useState([]);
+  const [addingEntry, setAddingEntry] = useState(false);
+  const [lowerRange, setLowerRange] = useState(0);
+  let earliestDate = "";
 
+  //gets called on app laod, fetch's entries & calculates lowerRange for calendar
   useEffect(() => {
     async function tempFunction() {
       await getEntries();
     }
     tempFunction();
+
     return () => {};
   }, []);
-
-  const current = new Date();
-  const currDate = `${
-    current.getMonth() + 1
-  }/${current.getDate()}/${current.getFullYear()}`;
-
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isRender, setisRender] = useState(false);
-  const [entries, setEntries] = useState([]);
-  const [addingEntry, setAddingEntry] = useState(false);
 
   const saveEntries = async (entriesToSave) => {
     try {
@@ -49,25 +41,45 @@ export default function HomeScreen({ navigation, route }) {
         setEntries(output);
       }
     } catch (error) {
-      console.log("ERROR");
       console.error(error);
     }
   };
 
-  // if coming from View Entry Screen, update entry's sets and name
+  //marks all dates that have entries
+  let mark = {};
+  entries.map((entry) => {
+    mark[entry.id] = {
+      selected: true,
+      selectedColor: COLORS.purple,
+    };
+  });
+
+  //calculates how many months in the past to show for calendar
+  useEffect(() => {
+    let dates = entries.map((entry) => entry.id);
+    if (dates.length > 0) {
+      earliestDate = dates.reduce(function (pre, cur) {
+        return Date.parse(pre) > Date.parse(cur) ? cur : pre;
+      });
+      earliestDate = new Date(earliestDate);
+      setLowerRange(
+        current.getMonth() -
+          earliestDate.getMonth() +
+          12 * (current.getFullYear() - earliestDate.getFullYear())
+      );
+    }
+  }, [entries]);
+
   React.useEffect(() => {
     if (route.params?.exercises) {
+      // if coming from View Entry Screen, update entry's sets and name
       handleNewExercises(
         route.params.exercises,
         route.params.entryName,
         route.params.entryIndex
       );
-    }
-  });
-
-  // if deleting entry
-  React.useEffect(() => {
-    if (route.params?.isDeleting) {
+    } else if (route.params?.isDeleting) {
+      // if deleting entry
       handleDeleteEntry(route.params.index);
     }
   });
@@ -84,29 +96,10 @@ export default function HomeScreen({ navigation, route }) {
     setAddingEntry(false);
   }, [addingEntry]);
 
-  const handleNewEntry = (newEntry) => {
-    if (route.params?.entryName) {
-      route.params.entryName = null;
-    }
-    const newEntries = [...entries];
-    setEntries([
-      {
-        id: uuid(),
-        title: newEntry,
-        date: currDate,
-        exercises: [],
-      },
-      ...newEntries,
-    ]);
-    LayoutAnimation.configureNext(layoutAnimConfig);
-    saveEntries(entries);
-  };
-
   const handleNewExercises = (exercises, entryName, index) => {
     route.params.exercises = null;
     route.params.entryIndex = null;
     route.params.entryName = null;
-    console.log(index);
     const currEntry = entries[index];
     currEntry["exercises"] = exercises;
     currEntry["title"] = entryName;
@@ -114,21 +107,36 @@ export default function HomeScreen({ navigation, route }) {
     saveEntries(entries);
   };
 
-  const handleAddButton = () => {
-    handleNewEntry();
-    setAddingEntry(true);
+  const handleAddButton = (day) => {
+    // if user clicks on a date with no entry
+    if (!entries.find((entry) => entry.id == day.dateString)) {
+      handleNewEntry(day);
+      setAddingEntry(true);
+    } else {
+      let idx = entries.findIndex((entry) => entry.id == day.dateString);
+      let currEntry = entries.find((entry) => entry.id == day.dateString);
+      navigation.navigate("View Entry", {
+        item: currEntry,
+        index: idx,
+        fromHome,
+      });
+    }
   };
 
-  const layoutAnimConfig = {
-    update: {
-      duration: 500,
-      type: LayoutAnimation.Types.easeInEaseOut,
-    },
-    delete: {
-      duration: 200,
-      type: LayoutAnimation.Types.easeInEaseOut,
-      property: LayoutAnimation.Properties.opacity,
-    },
+  const handleNewEntry = (newEntry) => {
+    if (route.params?.entryName) {
+      route.params.entryName = null;
+    }
+    const newEntries = [...entries];
+    setEntries([
+      {
+        id: newEntry["dateString"],
+        title: "",
+        exercises: [],
+      },
+      ...newEntries,
+    ]);
+    saveEntries(entries);
   };
 
   const handleDeleteEntry = (index) => {
@@ -137,7 +145,6 @@ export default function HomeScreen({ navigation, route }) {
     const newEntries = [...entries];
     newEntries.splice(index, 1);
     setEntries(newEntries);
-    LayoutAnimation.configureNext(layoutAnimConfig);
     if (entries.length == 1) {
       AsyncStorage.removeItem("entryList");
     } else {
@@ -145,44 +152,47 @@ export default function HomeScreen({ navigation, route }) {
     }
   };
 
-  const fromHomeNew = " ";
-
-  const renderItem = ({ item, index }) => {
-    return <EntryItem item={item} index={index}></EntryItem>;
+  //used for testing
+  const clearStorage = async () => {
+    // AsyncStorage.clear();
+    const newEntries = [...entries];
+    setEntries([
+      {
+        id: "2023-05-01",
+        title: "",
+        exercises: [],
+      },
+      ...newEntries,
+    ]);
+    saveEntries(entries);
   };
 
   return (
-    <NativeBaseProvider>
-      <View style={styles.header}></View>
-      {/* List */}
+    <>
       <SafeAreaView style={styles.container}>
-        {entries.length == 0 && (
-          <View style={styles.noEntryContainer}>
-            <Text style={styles.noEntriesText}>No Entries</Text>
-          </View>
-        )}
-
-        <FlatList
-          // ListHeaderComponent={()=><Text alignSelf={"center"} fontSize={24} color={"#9a9a9a"}>entries: {entries.length}</Text>}
-          contentContainerStyle={{paddingBottom: 110 }}
-          ItemSeparatorComponent={() => <View style={{ height: 0 }} />}
-          keyExtractor={(item) => item.id.toString()}
-          data={entries}
-          renderItem={renderItem}
-          extraData={isRender}
-        />
+        <CalendarList
+          theme={{
+            calendarBackground: COLORS.black,
+            dayTextColor: COLORS.white,
+            monthTextColor: COLORS.white,
+          }}
+          horizontal={false}
+          futureScrollRange={1}
+          pastScrollRange={lowerRange}
+          onDayPress={(day) => {
+            handleAddButton(day);
+          }}
+          markedDates={mark}
+        ></CalendarList>
       </SafeAreaView>
-      {/* List */}
 
-      <View style={styles.addButtonContainer}>
+      {/* <View style={styles.addButtonContainer}>
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => handleAddButton()}
-        >
-          <AddIcon size={"md"} color={"#ced9bf"}></AddIcon>
-        </TouchableOpacity>
-      </View>
-    </NativeBaseProvider>
+          onPress={() => clearStorage()}
+        ></TouchableOpacity>
+      </View> */}
+    </>
   );
 }
 
@@ -190,11 +200,11 @@ const styles = StyleSheet.create({
   header: {
     height: "11%",
     flexDirection: "column",
-    backgroundColor: "#08090a",
+    backgroundColor: COLORS.black,
     // backgroundColor: "blue",
     justifyContent: "center",
     borderBottomWidth: 1,
-    borderColor: "#23292d",
+    // borderColor: "#23292d",
   },
 
   headerText: {
@@ -204,7 +214,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: "#08090a",
+    backgroundColor: COLORS.black,
     paddingBottom: 0.3,
   },
 
@@ -218,7 +228,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: "50%",
-    backgroundColor: "#82b3c9",
+    backgroundColor: COLORS.purple,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -234,7 +244,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 325,
     fontSize: 22,
-    color: "#ced9bf",
+    color: COLORS.gray,
+  },
 
+  calendarDatesStyle: {
+    color: COLORS.white,
   },
 });

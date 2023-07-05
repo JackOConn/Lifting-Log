@@ -1,6 +1,5 @@
 import HomeScreen from "./screens/HomeScreen";
 import ViewEntryScreen from "./screens/ViewEntryScreen";
-import { EntryItem } from "./EntryItem";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -19,11 +18,6 @@ export default function App() {
           name="View Entry"
           component={ViewEntryScreen}
           options={{ headerShown: false, gestureEnabled: false }}
-        />
-        <Stack.Screen
-          name="Entry Item"
-          component={EntryItem}
-          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
